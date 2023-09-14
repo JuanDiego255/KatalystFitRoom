@@ -1,0 +1,87 @@
+@extends('layouts.admin')
+@section('content')
+    <div class="container">
+
+        <h2 class="text-center font-title"><strong>Nuestros Usuarios</strong>
+        </h2>
+
+        <hr class="hr-servicios">
+
+        <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-black text-white">Nuevo Usuario</a><br><br>
+    </div>
+    <center>
+
+        <div class="card w-75 mb-4">
+            <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-left text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                Usuario</th>
+
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                Acciones</th>
+                            <th class="text-secondary opacity-7"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr>
+
+                                <td class="align-middle text-xxs text-center">
+
+                                    <div class="d-flex px-2 py-1 text-center">
+                                        <div>
+                                            <img src="{{ url('images/sin-foto.png') }} " class="avatar avatar-sm me-3">
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="text-center mb-0">{{ $user->name }}</h6>
+
+                                        </div>
+                                    </div>
+
+                                </td>
+
+                                <td class="align-middle">
+                                    <center>
+                                        @if ($user->is_routine == 0)
+                                            <form method="post" action="{{ url('/create/routine/') }}"
+                                                style="display:inline">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" id="id" name="id"
+                                                    value="{{ $user->id }}">
+                                                <button class="btn bg-gradient-safewor-black text-white"
+                                                    type="submit">Crear Rutina
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ url('user/routine/' . $user->id) }}"
+                                                class="btn bg-gradient-safewor-black text-white">Ver Rutina</a>
+                                            <a href="{{ url('user/routine-day/' . $user->id) }}"
+                                                class="btn bg-gradient-safewor-black text-white">Días De Rutina</a>
+                                        @endif
+
+
+                                        <form method="post" action="{{ url('/delete/user/' . $user->id) }}"
+                                            style="display:inline">
+                                            {{ csrf_field() }}
+                                            {{ method_field('DELETE') }}
+                                            <button class="btn bg-gradient-safewor-red text-white" type="submit"
+                                                onclick="return confirm('Deseas borrar este usuario?')">Borrar
+                                            </button>
+                                        </form>
+                                    </center>
+
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{ $users ?? ('')->links('pagination::simple-bootstrap-4') }}
+
+
+    </center>
+@endsection
