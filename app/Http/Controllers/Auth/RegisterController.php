@@ -105,7 +105,7 @@ class RegisterController extends Controller
             'birthdate' => $data['birthdate'],
             'email' => $data['email'],
             'tutor' => $data['tutor'],
-            'blood_type' => 0,
+            'blood_type' => $data['blood_type'],
             'address' => $data['address'],
             'injuries' => $data['injuries'],
             'sick' => $data['sick'],

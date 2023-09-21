@@ -32,7 +32,7 @@
 
                                     <div class="d-flex px-2 py-1 text-center">
                                         <div>
-                                            <img src="{{ url('images/sin-foto.png') }} " class="avatar avatar-sm me-3">
+                                            <img src="{{ url('images/sin-foto.PNG') }} " class="avatar avatar-sm me-3">
                                         </div>
                                         <div class="d-flex flex-column justify-content-center">
                                             <h6 class="text-center mb-0">{{ $user->name }}</h6>
@@ -50,7 +50,7 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
                                                     value="{{ $user->id }}">
-                                                <button class="btn bg-gradient-safewor-black text-white"
+                                                <button onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')" class="btn bg-gradient-safewor-black text-white"
                                                     type="submit">Crear Rutina
                                                 </button>
                                             </form>

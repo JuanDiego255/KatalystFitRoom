@@ -32,7 +32,7 @@
 
                             <div class="row">
                                 <div class="col-md-6 text-center">
-                                    <button type="submit" class="btn bg-gradient-btnsafewor-yellow text-dark w-75">
+                                    <button type="submit" class="btn bg-gradient-safewor-red text-white w-75">
                                         {{ __('Ingresar') }}
                                     </button>
 

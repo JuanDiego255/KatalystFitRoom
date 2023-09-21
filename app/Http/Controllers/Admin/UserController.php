@@ -45,7 +45,7 @@ class UserController extends Controller
             ->select(
                 'general_categories.category as category',
                 'routines.day as day'
-            )->distinct('general_category_id')->get();
+            )->distinct('general_category_id')->orderBy('routines.day','asc')->get();
 
         $groupedCategories = [];
 
@@ -130,11 +130,13 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'telephone' => ['required', 'string', 'max:255'],
             'birthdate' => ['required', 'string', 'max:255'],
+
             'telephone' => ['required', 'string', 'max:255'],
             'whatsapp' => ['required', 'string', 'max:255'],
             'tutor' => ['required', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+
         ]);
 
         // Crear un nuevo usuario
@@ -147,7 +149,7 @@ class UserController extends Controller
         $usuario->birthdate = $request->birthdate;
         $usuario->email = $request->email;
         $usuario->tutor = $request->tutor;
-        $usuario->blood_type = 0;
+        $usuario->blood_type = $request->blood_type;
         $usuario->address = $request->address;
         $usuario->injuries = $request->injuries;
         $usuario->sick = $request->sick;
@@ -230,6 +232,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+        User::destroy($id);
+        return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito','icon' => 'success']);
     }
 
 

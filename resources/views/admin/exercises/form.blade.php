@@ -42,7 +42,6 @@
             @enderror
         </div>
     </div>
-    
     <div class="col-md-12 mb-3">
         @if (isset($exercise->image))
             <img class="img-fluid img-thumbnail" src="{{ asset('storage') . '/' . $exercise->image }}"

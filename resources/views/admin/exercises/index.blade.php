@@ -22,7 +22,7 @@
 
             <button class="btn bg-gradient-safewor-black text-white w-25 " type="submit">Buscar</button>
         </form>
-    </div>
+   
 
     <center>
         @php
@@ -61,18 +61,15 @@
         @endif
         @include('admin.exercises.add')
 
-        <div class="card w-75 mb-4">
+        <div class="card w-100 mb-4">
             <div class="table-responsive">
                 <table class="table align-items-center mb-0">
                     <thead>
                         <tr>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                Código</th>
-                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Categoría</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Ejercicio</th>
-                            
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Imagen</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -83,19 +80,16 @@
                     <tbody>
                         @foreach ($exercises as $exercise)
                             <tr>
-                                <td class="align-middle text-xxs text-center">
-                                    <p class=" font-weight-bold mb-0">{{ $exercise->code }}</p>
-                                </td>
+
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">{{ $exercise->gen_category }}</p>
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <p class=" font-weight-bold mb-0">{{ $exercise->exercise }}</p>
                                 </td>
-                               
                                 <td class="align-middle text-xxs text-center">
                                     <img class="img-fluid img-thumbnail ml-2"
-                                        src="{{ asset('storage') . '/' . $exercise->image }}" alt="" width="100">
+                                        src="{{ asset('storage') . '/' . $exercise->image }}" alt="" style="width: 80px; height:80px;">
                                 </td>
 
                                 <td class="align-middle">
@@ -127,4 +121,5 @@
 
 
     </center>
+     </div>
 @endsection

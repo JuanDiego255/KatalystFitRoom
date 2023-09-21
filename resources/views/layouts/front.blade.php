@@ -55,6 +55,7 @@
         <script>
             swal({
                 title: "{{ session('status') }}",
+                text: "{{ session('text') }}",
                 icon: "{{ session('icon') }}",
             });
         </script>

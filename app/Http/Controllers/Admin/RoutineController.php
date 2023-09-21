@@ -245,7 +245,7 @@ class RoutineController extends Controller
 
     public function createWordToZero()
     {
-
+        
         $is_routine = Auth::user()->is_routine;
         if ($is_routine == 0) {
             return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
@@ -257,13 +257,13 @@ class RoutineController extends Controller
         $propiedades->setTitle("Tablas");
 
         $seccion = $documento->addSection();
-
+        
         // Agregar imagen al encabezado
         
         $header = $seccion->addHeader();
         $header->addWatermark('images/katalyst.PNG', array('marginTop' => 50, 'marginLeft' => 55, 'width' => 80,  // Ancho de la imagen en puntos
         'height' => 40));
-
+        
         $seccion->addTextBreak();
 
         $estiloTabla = [
@@ -271,15 +271,16 @@ class RoutineController extends Controller
             "alignment" => Jc::CENTER,
             "borderSize" => 10,
             "cellMargin" => 100
-
+           
         ];
 
         $documento->addTableStyle("estilo3", $estiloTabla);
         $tabla = $seccion->addTable("estilo3");
-
+       
 
         $styleCell = [
             "bgColor" => "A8E1F5",
+             "cellMargin" => 100
         ];
 
         // Obtener rutinas y categorizar por categoría general
@@ -289,7 +290,7 @@ class RoutineController extends Controller
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
             ->select(
-                'exercises.code as code',
+                
                 'general_categories.category as category',
                 'exercises.exercise as exercise',
                 'routines.day as day',
@@ -299,7 +300,7 @@ class RoutineController extends Controller
                 'routines.weight as weight',
                 'routines.form as form',
                 'routines.reps as reps'
-            )->orderBy('routines.day')->get();
+            )->orderBy('routines.day','asc')->orderBy('routines.alt','asc')->get();
 
         $categoryGroups = []; // Para almacenar categorías únicas
 
@@ -313,13 +314,20 @@ class RoutineController extends Controller
             "size" => 12,
             "color" => "000000",
         ];
+        
+        $styleCellItemOther = [
+                    "name" => "Arial",
+                    "size" => 12,
+                    "color" => '000000',
+                     "width" => 10
+                ];
 
         foreach ($categoryGroups as $category => $categoryRoutines) {
             $tabla = $seccion->addTable("estilo3");
             $tabla->addRow();
             $tabla->addCell(null, $styleCell)->addText("Peso", $fuente);
             $tabla->addCell()->addText("Alt", $fuente);
-            $tabla->addCell(100, $styleCell)->addText($category, $fuente);
+            $tabla->addCell(null, $styleCell)->addText($category, $fuente);
             $tabla->addCell()->addText("Series", $fuente);
             $tabla->addCell()->addText("Reps", $fuente);
             $tabla->addCell()->addText("Tipo", $fuente);
@@ -334,16 +342,17 @@ class RoutineController extends Controller
                     "name" => "Arial",
                     "size" => 12,
                     "color" => 'FFF',
+                    "width" => 100*50,
                     "bgColor" => $color,
                 ];
 
                 $tabla->addRow();
-                $tabla->addCell()->addText($routine->weight);
-                $tabla->addCell()->addText($routine->alt);
+                $tabla->addCell()->addText($routine->weight,$styleCellItemOther);
+                $tabla->addCell()->addText($routine->alt,$styleCellItemOther);
                 $tabla->addCell()->addText($routine->exercise, $styleCellItem);
-                $tabla->addCell()->addText($routine->series);
-                $tabla->addCell()->addText($routine->reps);
-                $tabla->addCell()->addText($routine->form);
+                $tabla->addCell()->addText($routine->series,$styleCellItemOther);
+                $tabla->addCell()->addText($routine->reps,$styleCellItemOther);
+                $tabla->addCell()->addText($routine->form,$styleCellItemOther);
                 $tabla->addCell()->addText($routine->description);
             }
         }
@@ -370,12 +379,12 @@ class RoutineController extends Controller
         ];
 
         $seccion->addText("Importante:", $fuenteTitle);
-
+        
 
         $seccion->addText("Para llevar control de peso, visita:", $fuenteNormal);
-        $seccion->addLink('https://www.katalystfitroom.com/Login.html', 'https://www.katalystfitroom.com/Login.html', $fuenteLink, false);
+        $seccion->addLink('https://www.katalystfitroom.com/Login.html','https://www.katalystfitroom.com/Login.html',$fuenteLink,false);
         $seccion->addText("Para registrar tu asistencia, visita:", $fuenteNormal);
-        $seccion->addLink('https://katalystfitroom.com/Asistencia.php', 'https://katalystfitroom.com/Asistencia.php', $fuenteLink, false);
+        $seccion->addLink('https://katalystfitroom.com/Asistencia.php','https://katalystfitroom.com/Asistencia.php',$fuenteLink,false);
         $seccion->addText("introducir num de ced - presionar 3 lineas izquier arriba-bitcora - insertar dato por dato-si necesita ayuda cualquier COACH presente te puede ayuda", $fuenteNormal);
 
         $seccion->addTextBreak();
@@ -404,7 +413,7 @@ class RoutineController extends Controller
             ];
 
             $tabla->addRow();
-            $tabla->addCell(100, $styleCellItemDay)->addText("Grupos Musculares - Día " . $day, $fuente);
+            $tabla->addCell(null, $styleCellItemDay)->addText("Grupos Musculares - Día " . $day, $fuente);
 
             foreach ($categoryGroups as $category => $categoryRoutines) {
                 $categories .= $category . ' ';
@@ -413,7 +422,7 @@ class RoutineController extends Controller
             $tabla->addRow();
             $tabla->addCell()->addText($categories, $fuente);
         }
-
+      
 
         $documento->getCompatibility()->setOoxmlVersion(15);
         $documento->getSettings()->setThemeFontLang(new Language("ES-CR"));

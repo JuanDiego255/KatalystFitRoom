@@ -27,7 +27,6 @@ class ExercisesController extends Controller
         ->select(
             'exercises.id as id',
             'exercises.exercise as exercise',
-            'exercises.code as code',
             'exercises.image as image',
             'general_categories.id as gen_category_id',
             'general_categories.category as gen_category'
@@ -47,7 +46,7 @@ class ExercisesController extends Controller
     {
         //
         $campos = [
-            'exercise' => 'required|string|max:100',          
+            'exercise' => 'required|string|max:100',
             'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
         ];
 
@@ -60,7 +59,7 @@ class ExercisesController extends Controller
         }
        
         $exercise->general_category_id = $request->general_category_id;
-        $exercise->exercise = $request->exercise;      
+        $exercise->exercise = $request->exercise;
         $exercise->save();
 
         return redirect('/exercises')->with(['status' => 'Se ha guardado el ejercicio con éxito', 'icon' => 'success']);
@@ -78,7 +77,7 @@ class ExercisesController extends Controller
     {
         //
         $campos = [
-            'exercise' => 'required|string|max:100',            
+            'exercise' => 'required|string|max:100',
             'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
         ];
         
@@ -95,7 +94,7 @@ class ExercisesController extends Controller
 
            
             $exercise->general_category_id = $request->general_category_id;
-            $exercise->exercise = $request->exercise;             
+            $exercise->exercise = $request->exercise;  
             $exercise->image = $image;
           
             $exercise->update();

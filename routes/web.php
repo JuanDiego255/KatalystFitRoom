@@ -39,6 +39,7 @@ Route::group(['auth'], function () {
 
     Route::get('/go-routine/{id}', [UserController::class, 'routineByCategory']);
     Route::get('/my-routine', [UserController::class, 'myRoutine']);
+    Route::get('/create-word', [RoutineController::class, 'createWordToZero']);
 
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('/disciplines', [DisciplineController::class, 'index']);
@@ -74,8 +75,8 @@ Route::group(['auth'], function () {
         Route::get('/user/routine-day/{id}', [UserController::class, 'showRoutineDays']);
         Route::get('/register-user', [UserController::class, 'newUser']);
         Route::post('/register-create', [UserController::class, 'store']);
+        Route::delete('/delete/user/{id}', [UserController::class, 'destroy']);
         Route::post('/end-day/{id}', [UserController::class, 'finishDay']);
-        Route::get('/create-word', [RoutineController::class, 'createWordToZero']);
 
         //Routes for Metatags
         Route::get('/meta-tags/indexadmin', [MetaTagsController::class, 'index']);

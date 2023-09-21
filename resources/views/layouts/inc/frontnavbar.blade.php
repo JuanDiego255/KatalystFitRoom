@@ -30,7 +30,7 @@
                    
                     <li class="nav-item px-3">
                         <a href="{{ route('login') }}" class="nav-link text-body p-0">
-                            Iniciar Sesión
+                            Ingresar
                         </a>
                     </li>
                      <li class="nav-item px-3">
@@ -68,7 +68,7 @@
                                         </div>
                                         <div class="ms-2">
                                             <h6 class="text-sm font-weight-normal mb-0">
-                                                Cerrar Sesión
+                                                Salir
                                             </h6>
                                         </div>
                                         <form id="logout-form" action="{{ route('logout') }}" method="POST"
@@ -84,10 +84,10 @@
 
                     <li class="nav-item px-3">
                         <a href="{{ url('/my-routine') }}" class="nav-link text-body p-0">
-                            Mí Rutina
+                            Rutina
                         </a>
                     </li>
-                    <li class="nav-item px-3">
+                     <li class="nav-item px-3">
                         <a href="{{ url('/create-word') }}" class="nav-link text-body p-0">
                             Descargar Rutina
                         </a>

@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
 
-        <h2 class="text-center font-title"><strong>Administra las disciplinas desde acá</strong>
+        <h2 class="text-center font-title"><strong>Administra las disciplinas desde acá, datos reflejados al cliente</strong>
         </h2>
 
         <hr class="hr-servicios">

@@ -160,9 +160,7 @@ is-invalid
                                             <option value="AB+">AB+
                                             </option>
                                             <option value="AB-">AB-
-                                            </option>                                                 
-
-                                            
+                                            </option>    
                                         </select>
                                         @error('blood_type')
                                             <span class="invalid-feedback" role="alert">
@@ -423,7 +421,7 @@ is-invalid
 
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn bg-gradient-btnsafewor-yellow text-dark w-50">
+                                    <button type="submit" class="btn bg-gradient-safewor-red text-white w-50">
                                         {{ __('Crear Cuenta') }}
                                     </button>
                                 </div>

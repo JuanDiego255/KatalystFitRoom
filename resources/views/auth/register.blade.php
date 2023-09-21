@@ -143,14 +143,24 @@ is-invalid
                                         <select id="blood_type" name="blood_type"
                                             class="form-control form-control-lg @error('blood_type') is-invalid @enderror"
                                             required autocomplete="local_id" autofocus>
-                                            <option value="0" selected>Sin Especificar</option>
+                                            <option value="Sin Especificar" selected>Sin Especificar</option>
 
-                                            <option value="1">Masculino
+                                            <option value="O+">O+
                                             </option>
-                                            <option value="2">Femenino
+                                            <option value="O-">O-
+                                            </option>   
+                                            <option value="A+">A+
                                             </option>
-
+                                            <option value="A-">A-
+                                            </option> 
+                                            <option value="B+">B+
                                             </option>
+                                            <option value="B-">B-
+                                            </option>  
+                                            <option value="AB+">AB+
+                                            </option>
+                                            <option value="AB-">AB-
+                                            </option>    
                                         </select>
                                         @error('blood_type')
                                             <span class="invalid-feedback" role="alert">
@@ -411,7 +421,7 @@ is-invalid
 
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    <button type="submit" class="btn bg-gradient-btnsafewor-yellow text-dark w-50">
+                                    <button type="submit" class="btn bg-gradient-safewor-red text-white w-50">
                                         {{ __('Crear Cuenta') }}
                                     </button>
                                 </div>

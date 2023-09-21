@@ -15,10 +15,10 @@
                                 <a class="d-block blur-shadow-image">
                                     <img @switch($day)
                                     @case(1)
-                                    src="{{ url('images/dia_1.png') }}"
+                                    src="{{ url('images/dia_1.PNG') }}"
                                         @break
                                     @case(2)
-                                    src="{{ url('images/dia_2.png') }}"
+                                    src="{{ url('images/dia_2.PNG') }}"
                                         @break
                                         @case(3)
                                         src="{{ url('images/dia_3.png') }}"

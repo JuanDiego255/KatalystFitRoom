@@ -147,12 +147,6 @@ return [
         ],
     ],
 
-    'custom' => [
-        'telephone' => [
-            'size' => 'El campo debe tener 11 caracteres.',
-        ],
-    ],
-
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes

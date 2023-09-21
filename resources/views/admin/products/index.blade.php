@@ -60,7 +60,7 @@
                 </script>
             @endif
             @include('admin.products.add')
-
+             
             <div class="card w-100 mb-4">
                 <div class="table-responsive">
                     <table class="table align-items-center mb-0">
@@ -87,6 +87,7 @@
                         </thead>
                         <tbody>
                             @foreach ($products as $product)
+                           
                                 <tr>
 
                                     <td class="align-middle text-xxs text-center">
@@ -119,7 +120,7 @@
                                                 src="{{ asset('storage') . '/' . $product->image }}"
                                                 style="width: 80px; height:80px;" alt="image">
                                         @else
-                                            <img class="img-fluid img-thumbnail" src="{{ url('images/sin-foto.png') }} "
+                                            <img class="img-fluid img-thumbnail" src="{{ url('images/sin-foto.PNG') }} "
                                                 style="width: 80px; height:80px;" alt="image">
                                         @endif
                                         <img class="img-fluid img-thumbnail ml-2"
@@ -145,8 +146,10 @@
                                         </center>
 
                                     </td>
-                                    @include('admin.products.edit')
+                                   
                                 </tr>
+                               @include('admin.products.edit')
+
                             @endforeach
                         </tbody>
                     </table>

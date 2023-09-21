@@ -14,7 +14,7 @@
     <hr class="horizontal light mt-0 mb-2">
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
-            <li class="nav-item">
+         {{--    <li class="nav-item">
                 <a @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
                     href="{{ url('/meta-tags/indexadmin') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -22,7 +22,7 @@
                     </div>
                     <span class="nav-link-text text-white ms-1">Administrar Metatags</span>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
                     href="{{ url('/disciplines') }}">
@@ -148,7 +148,7 @@
                     <center>
                         <ul class="ml-3 dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li class="ml-3 nav-item">
-                                <a class="text-center dropdown-item" href="{{ url('/detail/category') }}">
+                                <a class="text-center dropdown-item" href="#">
                                     <div class="d-flex align-items-center py-0 ml-1 pl-2">
                                         <div class="my-auto">
                                             <span class="material-icons">
@@ -164,7 +164,7 @@
                                 </a>
                             </li>
                             <li class="ml-3 nav-item">
-                                <a class="text-center dropdown-item" href="{{ url('/detail/category') }}">
+                                <a class="text-center dropdown-item" href="#">
                                     <div class="d-flex align-items-center py-0 ml-1 pl-2">
                                         <div class="my-auto">
                                             <span class="material-icons">

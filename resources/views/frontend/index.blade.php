@@ -9,7 +9,7 @@
 
             <div class="carousel-item">
                 <div class="page-header min-vh-75 m-3 border-radius-xl"
-                    style="background-image: url('images/carousel2.png');">
+                    style="background-image: url('images/carousel2.PNG');">
                     <span class="mask bg-gradient-dark"></span>
                     <div class="container">
                         <div class="row">
@@ -24,7 +24,7 @@
             </div>
             <div class="carousel-item active">
                 <div class="page-header min-vh-75 m-3 border-radius-xl"
-                    style="background-image: url('images/carousel1.png');">
+                    style="background-image: url('images/carousel1.PNG');">
                     <span class="mask bg-gradient-dark"></span>
                     <div class="container">
                         <div class="row">

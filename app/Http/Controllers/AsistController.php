@@ -17,7 +17,8 @@ class AsistController extends Controller
     public function index()
     {
         //
-        return view('frontend.asist');
+          return redirect()->back()->with(['status' => 'Módulo en desarrollo...', 'icon' => 'warning']);
+        //return view('frontend.asist');
     }
 
     /**
@@ -40,6 +41,7 @@ class AsistController extends Controller
     {
 
         try {
+            return redirect()->back()->with(['status' => 'Módulo en desarrollo...', 'icon' => 'warning']);
             $user = User::where('identification', $request->identification)->get();
 
             date_default_timezone_set('America/Chihuahua');

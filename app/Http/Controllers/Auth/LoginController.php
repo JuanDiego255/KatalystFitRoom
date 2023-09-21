@@ -33,7 +33,7 @@ class LoginController extends Controller
         if (Auth::user()->role_as == '1') {
             return redirect('/')->with('status', 'Bienvienido '.Auth::user()->name);
         } elseif (Auth::user()->role_as == '0') {
-            return redirect('/')->with('status', 'Inicio de sesiÃ³n exitoso!');
+            return redirect('/')->with('status', 'Inicio de sesi¨®n exitoso!');
         }
     }
     /**

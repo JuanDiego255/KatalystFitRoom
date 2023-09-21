@@ -18,7 +18,7 @@ class DetailsController extends Controller
      */
     public function index(Request $request)
     {
-        
+        //
         $Nombre = $request->get('searchfor');
 
         $categories = DetailsCategory::get();

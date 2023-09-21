@@ -22,6 +22,7 @@
 
         <button class="btn bg-gradient-safewor-black text-white w-25 " type="submit">Buscar</button>
     </form>
+    <h6>Puedes escribir en los campos de texto, luego presionar ENTER para guardar el valor.</h6>
     <center>
 
 
@@ -49,7 +50,7 @@
                                     Repeticiones</th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 w-5">
-                                    Peso</th>
+                                    Peso (Kg)</th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 w-5">
                                     Forma</th>
@@ -77,28 +78,28 @@
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onclick="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')" onclick="update(event,this.id,this.value,{{ $routine->id }},'0')" type="number"
                                                 name="alt" id="alt" min="0" value="{{ $routine->alt }}"
                                                 class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onclick="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')" onclick="update(event,this.id,this.value,{{ $routine->id }},'0')" type="number"
                                                 name="series" id="series" min="0" value="{{ $routine->series }}"
                                                 class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onclick="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')" onclick="update(event,this.id,this.value,{{ $routine->id }},'0')" type="number"
                                                 name="reps" id="reps" min="0" value="{{ $routine->reps }}"
                                                 class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onclick="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')" onclick="update(event,this.id,this.value,{{ $routine->id }},'0')" type="number"
                                                 min="0" name="weight" id="weight" value="{{ $routine->weight }}"
                                                 class="form-control w-25">
                                         </div>
@@ -151,25 +152,33 @@
 @endsection
 @section('script')
     <script>
-        function update(name, val, id) {
-
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                method: "POST",
-                url: "/update-routine",
-                data: {
-                    'name': name,
-                    'val': val,
-                    'id': id,
-                },
-                success: function(response) {
-
-                }
-            });
+        function update(e,name, val, id,tipo) {
+            var execute = 1;
+            if(tipo == '1'){
+                 if (e.keyCode !== 13 && !e.shiftKey) {
+                     execute = 0;
+                 }
+            }
+            
+            if(execute==1){
+                 $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    method: "POST",
+                    url: "/update-routine",
+                    data: {
+                        'name': name,
+                        'val': val,
+                        'id': id,
+                    },
+                    success: function(response) {
+    
+                    }
+                });
+            }
         }
 
         function updateForm(e, val, id) {
