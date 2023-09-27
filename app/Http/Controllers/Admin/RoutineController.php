@@ -102,6 +102,7 @@ class RoutineController extends Controller
             $last_number = Routine::where('user_id', $request->id)->max('routine_number');
             $count_exer_active = 0;
             $new_routine = [];
+            $message_error_quantity = false;
 
             if ($request->type == 0) {
                 foreach ($exercises as $exercise) {
@@ -117,6 +118,7 @@ class RoutineController extends Controller
                     $routine->save();
                 }
             } else {
+                $exercise_active = 0;                
                 $previousRoutine = Routine::where('user_id', $request->id)
                     ->where('routine_number', $last_number)
                     ->get();
@@ -136,17 +138,24 @@ class RoutineController extends Controller
                         ];
                         $count_exer_active++;
                     }
+                    if ($routine->day != 0) {
+                        $exercise_active++;
+                    }
+                }
+
+                if ($request->quantity > $exercise_active) {
+                    $message_error_quantity = true;
                 }
 
                 $count_zero = $count_exer_active;
-                $count_zero_diff = $count_exer_active;                                
-                $routine_change = $new_routine;                
+                $count_zero_diff = $count_exer_active;
+                $routine_change = $new_routine;
 
                 foreach ($previousRoutine as $routine_item) {
                     $continue = true;
                     $set_routine = false;
-                    $routine = new Routine();  
-                    $routine->user_id = $request->id;                  
+                    $routine = new Routine();
+                    $routine->user_id = $request->id;
 
                     if ($routine_item->day == 0 && $count_zero != 0) {
                         $new_routine_value = null;
@@ -159,7 +168,7 @@ class RoutineController extends Controller
                             }
                         }
 
-                        if ($new_routine_value !== null) {                            
+                        if ($new_routine_value !== null) {
                             $routine->general_category_id = $new_routine_value['general_category_id'];
                             $routine->exercise_id = $routine_item->exercise_id;
                             $routine->alt = $new_routine_value['alt'];
@@ -169,18 +178,17 @@ class RoutineController extends Controller
                             $routine->status = 1;
                             $routine->routine_number = $last_number_opc;
                             $set_routine = true;
-                            $continue = false; 
+                            $continue = false;
                             $count_zero--;
-                            unset($new_routine[$index]);                            
-                        } else {   
-                            $continue = true; 
-                        }                       
-                                              
+                            unset($new_routine[$index]);
+                        } else {
+                            $continue = true;
+                        }
                     }
 
                     if ($routine_item->day != 0 && $count_zero_diff != 0 && $continue) {
                         foreach ($routine_change as $item) {
-                            if ($routine_item->exercise_id == $item['exercise_id']) {                               
+                            if ($routine_item->exercise_id == $item['exercise_id']) {
                                 $routine->general_category_id = $routine_item->general_category_id;
                                 $routine->exercise_id = $routine_item->exercise_id;
                                 $routine->alt = 0;
@@ -188,15 +196,15 @@ class RoutineController extends Controller
                                 $routine->reps = 0;
                                 $routine->day = 0;
                                 $routine->status = 1;
-                                $routine->routine_number = $last_number_opc;  
+                                $routine->routine_number = $last_number_opc;
                                 $set_routine = true;
                                 $continue = false;
-                                $count_zero_diff--;                             
+                                $count_zero_diff--;
                             }
-                        }     
+                        }
                     }
 
-                    if ($continue) {                       
+                    if ($continue) {
                         $routine->general_category_id = $routine_item->general_category_id;
                         $routine->exercise_id = $routine_item->exercise_id;
                         $routine->alt = $routine_item->alt;
@@ -207,16 +215,19 @@ class RoutineController extends Controller
                         $routine->routine_number = $last_number_opc;
                         $set_routine = true;
                     }
-                    if($set_routine){
+                    if ($set_routine) {
                         $routine->save();
                     }
                 }
             }
-           
+
             $user = User::find($request->id);
             $user->is_routine = 1;
             $user->save();
 
+            if($message_error_quantity){
+                return redirect()->back()->with(['status' => 'La cantidad de ejercicios a generar es mayor que la cantidad de ejercicios activos. Ejercicios generados: '.$exercise_active, 'icon' => 'warning']);
+            }
             return redirect()->back()->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
         } catch (Exception $e) {
 
