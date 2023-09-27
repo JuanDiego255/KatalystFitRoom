@@ -221,8 +221,12 @@ class RoutineController extends Controller
                 }
             }
 
+            date_default_timezone_set('America/Chihuahua');
+            $date = date("Y-m-d", strtotime("+1 month"));
+
             $user = User::find($request->id);
             $user->is_routine = 1;
+            $user->change_routine = $date;
             $user->save();
 
             if ($message_error_quantity) {
@@ -488,7 +492,7 @@ class RoutineController extends Controller
 
         $seccion->addText("Nombre: ".$user->name, $fuenteNormal);
         $seccion->addText("Peso: ".$user->weight.'Kg', $fuenteNormal);
-        $seccion->addText("Cambio de Rutina: ", $fuenteNormal);
+        $seccion->addText("Cambio de Rutina: ".$user->change_routine, $fuenteNormal);
 
         $estiloTabla = [
             "borderColor" => "000000",

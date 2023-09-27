@@ -46,7 +46,8 @@ class User extends Authenticatable
         'fainting',
         'nausea',
         'password',
-        'is_routine'
+        'is_routine',
+        'change_routine'
     ];
 
     /**
