@@ -33,13 +33,7 @@ class UserController extends Controller
      */
     public function myRoutine()
     {
-        //
-        $is_routine = Auth::user()->is_routine;
-        if ($is_routine == 0) {
-            return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
-        }
-        
-
+        //      
         $uniqueCategories = Routine::where('day', '!=', '0')
             ->where('routines.user_id', Auth::user()->id)
             ->where('routines.status', 1)
@@ -47,11 +41,15 @@ class UserController extends Controller
             ->select(
                 'general_categories.category as category',
                 'routines.day as day'
-            )->distinct('general_category_id')->orderBy('routines.day','asc')->get();
+            )->distinct('general_category_id')->orderBy('routines.day', 'asc')->get();
+
+        if ($uniqueCategories == null) {
+            return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
+        }
 
         $groupedCategories = [];
 
-        $days = RoutineDays::where('user_id',Auth::user()->id)->get();
+        $days = RoutineDays::where('user_id', Auth::user()->id)->get();
 
         foreach ($uniqueCategories as $category) {
             $day = $category['day'];
@@ -64,7 +62,7 @@ class UserController extends Controller
             $groupedCategories[$day][] = $categoryName;
         }
 
-        return view('admin.users.index-routine', compact('groupedCategories','days'));
+        return view('admin.users.index-routine', compact('groupedCategories', 'days'));
     }
 
     /**
@@ -78,7 +76,7 @@ class UserController extends Controller
         $Nombre = $request->get('searchfor');
         $user = User::find($id);
         $name = $user->name;
-       
+
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
@@ -105,7 +103,7 @@ class UserController extends Controller
             )->orderBy('routines.day', 'desc')
             ->simplePaginate(7);
 
-           
+
         return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day'));
     }
 
@@ -236,7 +234,7 @@ class UserController extends Controller
     {
         //
         User::destroy($id);
-        return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito','icon' => 'success']);
+        return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito', 'icon' => 'success']);
     }
 
 
@@ -366,13 +364,13 @@ class UserController extends Controller
             $routine->update();
 
             $routine_exercise = Routine::where('user_id', $user_id)
-            ->where('status', 1)
-            ->where('day', $day)
-            ->where('completed',1)->get();
+                ->where('status', 1)
+                ->where('day', $day)
+                ->where('completed', 1)->get();
             foreach ($routine_exercise as $routine) {
 
                 $routine = Routine::findOrfail($routine->id);
-                $routine->completed = 0;               
+                $routine->completed = 0;
                 $routine->update();
             }
 

@@ -39,7 +39,7 @@ Route::group(['auth'], function () {
 
     Route::get('/go-routine/{id}', [UserController::class, 'routineByCategory']);
     Route::get('/my-routine', [UserController::class, 'myRoutine']);
-    Route::get('/create-word', [RoutineController::class, 'createWordToZero']);
+    Route::get('/create-word/{id}', [RoutineController::class, 'createWordToZero']);
 
     Route::group(['middleware' => 'isAdmin'], function () {
         Route::get('/disciplines', [DisciplineController::class, 'index']);

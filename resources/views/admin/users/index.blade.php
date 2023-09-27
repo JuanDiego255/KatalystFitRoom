@@ -50,9 +50,11 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
                                                     value="{{ $user->id }}">
-                                                    <input type="hidden" id="type" name="type" value="0">
-                                                <button onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')" class="btn bg-gradient-safewor-black text-white"
-                                                    type="submit">Crear Rutina
+                                                <input type="hidden" id="type" name="type" value="0">
+                                                <button
+                                                    onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')"
+                                                    class="btn bg-gradient-safewor-black text-white" type="submit">Crear
+                                                    Rutina
                                                 </button>
                                             </form>
                                         @else
@@ -60,6 +62,8 @@
                                                 class="btn bg-gradient-safewor-black text-white">Ver Rutina</a>
                                             <a href="{{ url('user/routine-day/' . $user->id) }}"
                                                 class="btn bg-gradient-safewor-black text-white">Días De Rutina</a>
+                                            <a href="{{ url('create-word/' . $user->id) }}"
+                                                class="btn bg-gradient-safewor-black text-white">Descargar Rutina</a>
                                         @endif
 
 

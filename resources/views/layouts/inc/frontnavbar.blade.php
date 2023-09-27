@@ -88,7 +88,7 @@
                         </a>
                     </li>
                      <li class="nav-item px-3">
-                        <a href="{{ url('/create-word') }}" class="nav-link text-body p-0">
+                        <a href="{{ url('/create-word/'.Auth::user()->id) }}" class="nav-link text-body p-0">
                             Descargar Rutina
                         </a>
                     </li>

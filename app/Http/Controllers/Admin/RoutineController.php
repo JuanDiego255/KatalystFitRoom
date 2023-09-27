@@ -118,7 +118,7 @@ class RoutineController extends Controller
                     $routine->save();
                 }
             } else {
-                $exercise_active = 0;                
+                $exercise_active = 0;
                 $previousRoutine = Routine::where('user_id', $request->id)
                     ->where('routine_number', $last_number)
                     ->get();
@@ -225,8 +225,8 @@ class RoutineController extends Controller
             $user->is_routine = 1;
             $user->save();
 
-            if($message_error_quantity){
-                return redirect()->back()->with(['status' => 'La cantidad de ejercicios a generar es mayor que la cantidad de ejercicios activos. Ejercicios generados: '.$exercise_active, 'icon' => 'warning']);
+            if ($message_error_quantity) {
+                return redirect()->back()->with(['status' => 'La cantidad de ejercicios a generar es mayor que la cantidad de ejercicios activos. Ejercicios generados: ' . $exercise_active, 'icon' => 'warning']);
             }
             return redirect()->back()->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
         } catch (Exception $e) {
@@ -415,11 +415,55 @@ class RoutineController extends Controller
         return redirect('user/routine/' . $request->user_id);
     }
 
-    public function createWordToZero()
+    public function createWordToZero($id)
     {
+        $user = User::find($id);
+        //Estilos
+        $styleCell = [
+            "bgColor" => "A8E1F5",
+            "cellMargin" => 100
+        ];
 
-        $is_routine = Auth::user()->is_routine;
-        if ($is_routine == 0) {
+        $fuenteNormal = [
+            "name" => "Arial",
+            "size" => 12,
+            "color" => "000000",
+        ];
+        $fuenteLink = [
+            "name" => "Arial",
+            "size" => 12,
+            "color" => "1E10F7",
+        ];
+
+        $fuenteTitle = [
+            "name" => "Arial",
+            "size" => 12,
+            "color" => "000000",
+
+            "bold" => true,
+        ];
+        //Estilos
+
+        // Obtener rutinas y categorizar por categoría general
+        $routines = Routine::where('routines.user_id', $id)
+            ->where('routines.day', '!=', 0)
+            ->where('routines.status', 1)
+            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
+            ->join('exercises', 'routines.exercise_id', 'exercises.id')
+            ->select(
+
+                'general_categories.category as category',
+                'exercises.exercise as exercise',
+                'routines.day as day',
+                'routines.description as description',
+                'routines.series as series',
+                'routines.alt as alt',
+                'routines.weight as weight',
+                'routines.form as form',
+                'routines.reps as reps'
+            )->orderBy('routines.day', 'asc')->orderBy('routines.alt', 'asc')->get();
+
+        if (count($routines) == 0) {
             return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
         }
 
@@ -438,7 +482,13 @@ class RoutineController extends Controller
             'height' => 40
         ));
 
-        $seccion->addTextBreak();
+        $seccion->addTextBreak(); 
+
+        $seccion->addText("Datos del usuario", $fuenteTitle);
+
+        $seccion->addText("Nombre: ".$user->name, $fuenteNormal);
+        $seccion->addText("Peso: ".$user->weight.'Kg', $fuenteNormal);
+        $seccion->addText("Cambio de Rutina: ", $fuenteNormal);
 
         $estiloTabla = [
             "borderColor" => "000000",
@@ -449,32 +499,9 @@ class RoutineController extends Controller
         ];
 
         $documento->addTableStyle("estilo3", $estiloTabla);
-        $tabla = $seccion->addTable("estilo3");
+        $tabla = $seccion->addTable("estilo3");      
 
-
-        $styleCell = [
-            "bgColor" => "A8E1F5",
-            "cellMargin" => 100
-        ];
-
-        // Obtener rutinas y categorizar por categoría general
-        $routines = Routine::where('routines.user_id', Auth::user()->id)
-            ->where('routines.day', '!=', 0)
-            ->where('routines.status', 1)
-            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
-            ->join('exercises', 'routines.exercise_id', 'exercises.id')
-            ->select(
-
-                'general_categories.category as category',
-                'exercises.exercise as exercise',
-                'routines.day as day',
-                'routines.description as description',
-                'routines.series as series',
-                'routines.alt as alt',
-                'routines.weight as weight',
-                'routines.form as form',
-                'routines.reps as reps'
-            )->orderBy('routines.day', 'asc')->orderBy('routines.alt', 'asc')->get();
+        
 
         $categoryGroups = []; // Para almacenar categorías únicas
 
@@ -531,29 +558,9 @@ class RoutineController extends Controller
             }
         }
 
-        $seccion->addTextBreak();
-
-        $fuenteNormal = [
-            "name" => "Arial",
-            "size" => 12,
-            "color" => "000000",
-        ];
-        $fuenteLink = [
-            "name" => "Arial",
-            "size" => 12,
-            "color" => "1E10F7",
-        ];
-
-        $fuenteTitle = [
-            "name" => "Arial",
-            "size" => 12,
-            "color" => "000000",
-
-            "bold" => true,
-        ];
+        $seccion->addTextBreak();    
 
         $seccion->addText("Importante:", $fuenteTitle);
-
 
         $seccion->addText("Para llevar control de peso, visita:", $fuenteNormal);
         $seccion->addLink('https://www.katalystfitroom.com/Login.html', 'https://www.katalystfitroom.com/Login.html', $fuenteLink, false);
@@ -603,7 +610,7 @@ class RoutineController extends Controller
 
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($documento, "Word2007");
 
-        $modifiedFilePath = 'Rutina de ' . Auth::user()->name . '.docx';
+        $modifiedFilePath = 'Rutina de ' . $user->name . '.docx';
         $objWriter->save($modifiedFilePath);
 
         return response()->download($modifiedFilePath);
