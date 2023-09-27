@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\SimpleType\Jc;
@@ -48,38 +49,177 @@ class RoutineController extends Controller
     {
         //
         try {
+
             $exercises = Exercises::all();
 
             if (count($exercises) == 0) {
                 return redirect('/users')->with(['status' => 'No existen ejercicios para crear rutinas', 'icon' => 'warning']);
             }
 
-            for ($i = 1; $i < 7; $i++) {
-                $day = new RoutineDays();
-                $day->user_id = Auth::user()->id;
-                $day->day = $i;
-                $day->status = 1;
-                $day->save();
+            $last_number = Routine::where('user_id', $request->id)->where('status', 1)->max('routine_number');
+
+            if ($last_number == null) {
+                $last_number_opc = 1;
+            } else {
+                if ($last_number != 3) {
+                    $last_number_opc = $last_number + 1;
+                } else {
+                    $last_number_opc = $last_number;
+                }
             }
 
-            foreach ($exercises as $exercise) {
-                $routine = new Routine();
-                $routine->user_id = $request->id;
-                $routine->general_category_id = $exercise->general_category_id;
-                $routine->exercise_id = $exercise->id;
-                $routine->alt = 0;
-                $routine->series = 0;
-                $routine->reps = 0;
-                $routine->status = 1;
-                $routine->save();
+
+            $verify_days = RoutineDays::where('user_id', $request->id)->get();
+
+            if (count($verify_days) == 0) {
+                for ($i = 1; $i < 7; $i++) {
+                    $day = new RoutineDays();
+                    $day->user_id = $request->id;
+                    $day->day = $i;
+                    $day->status = 1;
+                    $day->save();
+                }
             }
+
+            if ($last_number_opc > 1) {
+
+                $routine_exist = Routine::where('user_id', $request->id)->get();
+
+                foreach ($routine_exist as $routine) {
+                    $routine = Routine::findOrfail($routine->id);
+                    $routine->status = 0;
+                    if ($last_number_opc == 3 && $routine->routine_number == 1 && $last_number == 3) {
+                        Routine::destroy($routine->id);
+                    } else {
+                        if ($routine->routine_number != 1 && $last_number == 3) {
+                            $routine->routine_number = $routine->routine_number - 1;
+                        }
+                        $routine->update();
+                    }
+                }
+            }
+
+            $last_number = Routine::where('user_id', $request->id)->max('routine_number');
+            $count_exer_active = 0;
+            $new_routine = [];
+
+            if ($request->type == 0) {
+                foreach ($exercises as $exercise) {
+                    $routine = new Routine();
+                    $routine->user_id = $request->id;
+                    $routine->general_category_id = $exercise->general_category_id;
+                    $routine->exercise_id = $exercise->id;
+                    $routine->alt = 0;
+                    $routine->series = 0;
+                    $routine->reps = 0;
+                    $routine->status = 1;
+                    $routine->routine_number = $last_number_opc;
+                    $routine->save();
+                }
+            } else {
+                $previousRoutine = Routine::where('user_id', $request->id)
+                    ->where('routine_number', $last_number)
+                    ->get();
+
+                foreach ($previousRoutine as $routine) {
+                    if ($routine->day != 0 && $request->quantity != $count_exer_active) {
+                        $new_routine[] = [
+                            "user_id" => $request->id,
+                            "general_category_id" => $routine->general_category_id,
+                            "exercise_id" => $routine->exercise_id,
+                            "alt" => $routine->alt,
+                            "series" => $routine->series,
+                            "reps" => $routine->reps,
+                            "day" => $routine->day,
+                            "status" => 1,
+                            "routine_number" => $last_number_opc,
+                        ];
+                        $count_exer_active++;
+                    }
+                }
+
+                $count_zero = $count_exer_active;
+                $count_zero_diff = $count_exer_active;                                
+                $routine_change = $new_routine;                
+
+                foreach ($previousRoutine as $routine_item) {
+                    $continue = true;
+                    $set_routine = false;
+                    $routine = new Routine();  
+                    $routine->user_id = $request->id;                  
+
+                    if ($routine_item->day == 0 && $count_zero != 0) {
+                        $new_routine_value = null;
+                        $index = null;
+                        foreach ($new_routine as $clave => $elemento) {
+                            if ($elemento["general_category_id"] == $routine_item->general_category_id) {
+                                $index = $clave;
+                                $new_routine_value = $elemento;
+                                break; // Rompe el bucle una vez que se encuentra el valor deseado
+                            }
+                        }
+
+                        if ($new_routine_value !== null) {                            
+                            $routine->general_category_id = $new_routine_value['general_category_id'];
+                            $routine->exercise_id = $routine_item->exercise_id;
+                            $routine->alt = $new_routine_value['alt'];
+                            $routine->series = $new_routine_value['series'];
+                            $routine->reps = $new_routine_value['reps'];
+                            $routine->day = $new_routine_value['day'];
+                            $routine->status = 1;
+                            $routine->routine_number = $last_number_opc;
+                            $set_routine = true;
+                            $continue = false; 
+                            $count_zero--;
+                            unset($new_routine[$index]);                            
+                        } else {   
+                            $continue = true; 
+                        }                       
+                                              
+                    }
+
+                    if ($routine_item->day != 0 && $count_zero_diff != 0 && $continue) {
+                        foreach ($routine_change as $item) {
+                            if ($routine_item->exercise_id == $item['exercise_id']) {                               
+                                $routine->general_category_id = $routine_item->general_category_id;
+                                $routine->exercise_id = $routine_item->exercise_id;
+                                $routine->alt = 0;
+                                $routine->series = 0;
+                                $routine->reps = 0;
+                                $routine->day = 0;
+                                $routine->status = 1;
+                                $routine->routine_number = $last_number_opc;  
+                                $set_routine = true;
+                                $continue = false;
+                                $count_zero_diff--;                             
+                            }
+                        }     
+                    }
+
+                    if ($continue) {                       
+                        $routine->general_category_id = $routine_item->general_category_id;
+                        $routine->exercise_id = $routine_item->exercise_id;
+                        $routine->alt = $routine_item->alt;
+                        $routine->series = $routine_item->series;
+                        $routine->reps = $routine_item->reps;
+                        $routine->day = $routine_item->day;
+                        $routine->status = 1;
+                        $routine->routine_number = $last_number_opc;
+                        $set_routine = true;
+                    }
+                    if($set_routine){
+                        $routine->save();
+                    }
+                }
+            }
+           
             $user = User::find($request->id);
             $user->is_routine = 1;
             $user->save();
 
-            return redirect('/users')->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
+            return redirect()->back()->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
         } catch (Exception $e) {
-            $user->is_routine = 0;
+
             throw $e;
         }
     }
@@ -90,9 +230,30 @@ class RoutineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($user_id)
     {
         //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function saveRoutine($user_id, $gen_cat_id, $exercise_id, $alt, $series, $reps, $rout_number)
+    {
+        //
+        $routine = new Routine();
+        $routine->user_id = $user_id;
+        $routine->general_category_id = $gen_cat_id;
+        $routine->exercise_id = $exercise_id;
+        $routine->alt = $alt;
+        $routine->series = $series;
+        $routine->reps = $reps;
+        $routine->status = 1;
+        $routine->routine_number = $rout_number;
+        $routine->save();
     }
 
     /**
@@ -245,7 +406,7 @@ class RoutineController extends Controller
 
     public function createWordToZero()
     {
-        
+
         $is_routine = Auth::user()->is_routine;
         if ($is_routine == 0) {
             return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
@@ -257,13 +418,15 @@ class RoutineController extends Controller
         $propiedades->setTitle("Tablas");
 
         $seccion = $documento->addSection();
-        
+
         // Agregar imagen al encabezado
-        
+
         $header = $seccion->addHeader();
-        $header->addWatermark('images/katalyst.PNG', array('marginTop' => 50, 'marginLeft' => 55, 'width' => 80,  // Ancho de la imagen en puntos
-        'height' => 40));
-        
+        $header->addWatermark('images/katalyst.PNG', array(
+            'marginTop' => 50, 'marginLeft' => 55, 'width' => 80,  // Ancho de la imagen en puntos
+            'height' => 40
+        ));
+
         $seccion->addTextBreak();
 
         $estiloTabla = [
@@ -271,16 +434,16 @@ class RoutineController extends Controller
             "alignment" => Jc::CENTER,
             "borderSize" => 10,
             "cellMargin" => 100
-           
+
         ];
 
         $documento->addTableStyle("estilo3", $estiloTabla);
         $tabla = $seccion->addTable("estilo3");
-       
+
 
         $styleCell = [
             "bgColor" => "A8E1F5",
-             "cellMargin" => 100
+            "cellMargin" => 100
         ];
 
         // Obtener rutinas y categorizar por categoría general
@@ -290,7 +453,7 @@ class RoutineController extends Controller
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
             ->select(
-                
+
                 'general_categories.category as category',
                 'exercises.exercise as exercise',
                 'routines.day as day',
@@ -300,7 +463,7 @@ class RoutineController extends Controller
                 'routines.weight as weight',
                 'routines.form as form',
                 'routines.reps as reps'
-            )->orderBy('routines.day','asc')->orderBy('routines.alt','asc')->get();
+            )->orderBy('routines.day', 'asc')->orderBy('routines.alt', 'asc')->get();
 
         $categoryGroups = []; // Para almacenar categorías únicas
 
@@ -314,13 +477,13 @@ class RoutineController extends Controller
             "size" => 12,
             "color" => "000000",
         ];
-        
+
         $styleCellItemOther = [
-                    "name" => "Arial",
-                    "size" => 12,
-                    "color" => '000000',
-                     "width" => 10
-                ];
+            "name" => "Arial",
+            "size" => 12,
+            "color" => '000000',
+            "width" => 10
+        ];
 
         foreach ($categoryGroups as $category => $categoryRoutines) {
             $tabla = $seccion->addTable("estilo3");
@@ -342,17 +505,17 @@ class RoutineController extends Controller
                     "name" => "Arial",
                     "size" => 12,
                     "color" => 'FFF',
-                    "width" => 100*50,
+                    "width" => 100 * 50,
                     "bgColor" => $color,
                 ];
 
                 $tabla->addRow();
-                $tabla->addCell()->addText($routine->weight,$styleCellItemOther);
-                $tabla->addCell()->addText($routine->alt,$styleCellItemOther);
+                $tabla->addCell()->addText($routine->weight, $styleCellItemOther);
+                $tabla->addCell()->addText($routine->alt, $styleCellItemOther);
                 $tabla->addCell()->addText($routine->exercise, $styleCellItem);
-                $tabla->addCell()->addText($routine->series,$styleCellItemOther);
-                $tabla->addCell()->addText($routine->reps,$styleCellItemOther);
-                $tabla->addCell()->addText($routine->form,$styleCellItemOther);
+                $tabla->addCell()->addText($routine->series, $styleCellItemOther);
+                $tabla->addCell()->addText($routine->reps, $styleCellItemOther);
+                $tabla->addCell()->addText($routine->form, $styleCellItemOther);
                 $tabla->addCell()->addText($routine->description);
             }
         }
@@ -379,12 +542,12 @@ class RoutineController extends Controller
         ];
 
         $seccion->addText("Importante:", $fuenteTitle);
-        
+
 
         $seccion->addText("Para llevar control de peso, visita:", $fuenteNormal);
-        $seccion->addLink('https://www.katalystfitroom.com/Login.html','https://www.katalystfitroom.com/Login.html',$fuenteLink,false);
+        $seccion->addLink('https://www.katalystfitroom.com/Login.html', 'https://www.katalystfitroom.com/Login.html', $fuenteLink, false);
         $seccion->addText("Para registrar tu asistencia, visita:", $fuenteNormal);
-        $seccion->addLink('https://katalystfitroom.com/Asistencia.php','https://katalystfitroom.com/Asistencia.php',$fuenteLink,false);
+        $seccion->addLink('https://katalystfitroom.com/Asistencia.php', 'https://katalystfitroom.com/Asistencia.php', $fuenteLink, false);
         $seccion->addText("introducir num de ced - presionar 3 lineas izquier arriba-bitcora - insertar dato por dato-si necesita ayuda cualquier COACH presente te puede ayuda", $fuenteNormal);
 
         $seccion->addTextBreak();
@@ -422,7 +585,7 @@ class RoutineController extends Controller
             $tabla->addRow();
             $tabla->addCell()->addText($categories, $fuente);
         }
-      
+
 
         $documento->getCompatibility()->setOoxmlVersion(15);
         $documento->getSettings()->setThemeFontLang(new Language("ES-CR"));

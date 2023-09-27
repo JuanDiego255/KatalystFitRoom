@@ -50,6 +50,7 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
                                                     value="{{ $user->id }}">
+                                                    <input type="hidden" id="type" name="type" value="0">
                                                 <button onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')" class="btn bg-gradient-safewor-black text-white"
                                                     type="submit">Crear Rutina
                                                 </button>

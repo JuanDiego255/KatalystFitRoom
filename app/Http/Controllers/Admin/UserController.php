@@ -38,9 +38,11 @@ class UserController extends Controller
         if ($is_routine == 0) {
             return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
         }
+        
 
         $uniqueCategories = Routine::where('day', '!=', '0')
-            ->where('user_id', Auth::user()->id)
+            ->where('routines.user_id', Auth::user()->id)
+            ->where('routines.status', 1)
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->select(
                 'general_categories.category as category',
@@ -81,6 +83,7 @@ class UserController extends Controller
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
         $routines = Routine::where('routines.user_id', $id)
+            ->where('routines.status', 1)
             ->Where('general_categories.category', 'like', "%$Nombre%")
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
