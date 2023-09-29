@@ -10,16 +10,33 @@
 
 
     </div>
-    <form class="form-inline">
-        <div class="col-md-6 mb-3">
-            <div class="input-group input-group-lg input-group-outline my-3">
-                <label class="form-label">Filtrar</label>
-                <input value="" type="text" class="form-control form-control-lg" name="searchfor">
+    <div class="row w-50">
 
-            </div>
+        <div class="col-md-6 mb-3">
+            <form class="form-inline">
+                <div class="input-group input-group-lg input-group-outline my-3 w-100">
+                    <label class="form-label">Filtrar Por Categoría (Presiona Enter)</label>
+                    <input value="" type="text" class="form-control form-control-lg w-50" name="searchfor"
+                        id="searchfor">
+                    <input type="hidden" id="filter" name="filter" value="0">
+
+                </div>
+            </form>
         </div>
-        <button class="btn bg-gradient-safewor-black text-white w-25 " type="submit">Buscar</button>
-    </form>
+
+
+        <div class="col-md-6 mb-3">
+            <form class="form-inline">
+                <div class="input-group input-group-lg input-group-outline my-3 w-100">
+                    <label class="form-label">Filtrar Por Ejercicio (Presiona Enter)</label>
+                    <input value="" type="text" class="form-control form-control-lg w-50" name="searchfor"
+                        id="searchfor">
+                    <input type="hidden" id="filter" name="filter" value="1">
+                </div>
+            </form>
+        </div>
+
+    </div>
     <div class="dropdpwn">
         <a class="btn bg-gradient-safewor-red text-white" data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
             Nueva Rutina <i class="material-icons text-white">expand_more</i>
@@ -215,6 +232,29 @@
         }
 
         function updateForm(e, val, id) {
+            if (e.keyCode === 13 && !e.shiftKey) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    method: "POST",
+                    url: "/update-routine-form",
+                    data: {
+
+                        'val': val,
+                        'id': id,
+                    },
+                    success: function(response) {
+
+                    }
+                });
+            }
+
+        }
+
+        function filter(e, val) {
             if (e.keyCode === 13 && !e.shiftKey) {
                 $.ajaxSetup({
                     headers: {

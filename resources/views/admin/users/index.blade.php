@@ -1,14 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-    
+    <h2 class="text-center font-title"><strong>Nuestros Usuarios</strong>
+    </h2>
 
-        <h2 class="text-center font-title"><strong>Nuestros Usuarios</strong>
-        </h2>
+    <hr class="hr-servicios">
 
-        <hr class="hr-servicios">
+    <form class="form-inline">
+        <div class="col-md-6 mb-3">
+            <div class="input-group input-group-lg input-group-outline my-3">
+                <label class="form-label">Filtrar (Presionar Enter)</label>
+                <input value="" type="text" class="form-control form-control-lg" name="searchfor">
 
-        <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-black text-white">Nuevo Usuario</a><br><br>
-    
+            </div>
+        </div>
+    </form>
+
+    <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-red text-white">Nuevo Usuario</a><br><br>
+
     <center>
 
         <div class="card w-100 mb-4">

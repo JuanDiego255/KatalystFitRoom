@@ -18,11 +18,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $Nombre = $request->get('searchfor');        
 
-        $users = User::simplePaginate(5);
+        $users = User::Where('users.name', 'like', "%$Nombre%")
+        ->select(
+                'users.name as name',
+                'users.id as id',
+                'users.is_routine as is_routine'
+            )->orderBy('users.name', 'asc')->simplePaginate(7);
         return view('admin.users.index', compact('users'));
     }
 
@@ -73,16 +79,20 @@ class UserController extends Controller
     public function showRoutine($id, Request $request)
     {
         //
-        $Nombre = $request->get('searchfor');
+        $filter_name = $request->get('searchfor');
+        if($request->get('filter')=='0'){
+            $filter = 'general_categories.category';
+        }else{
+            $filter = 'exercises.exercise';
+        }
         $user = User::find($id);
         $name = $user->name;
-
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
         $routines = Routine::where('routines.user_id', $id)
             ->where('routines.status', 1)
-            ->Where('general_categories.category', 'like', "%$Nombre%")
+            ->Where($filter, 'like', "%$filter_name%")
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
             ->select(
