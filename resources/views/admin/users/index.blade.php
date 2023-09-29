@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="container">
+    
 
         <h2 class="text-center font-title"><strong>Nuestros Usuarios</strong>
         </h2>
@@ -8,10 +8,10 @@
         <hr class="hr-servicios">
 
         <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-black text-white">Nuevo Usuario</a><br><br>
-    </div>
+    
     <center>
 
-        <div class="card w-75 mb-4">
+        <div class="card w-100 mb-4">
             <div class="table-responsive">
                 <table class="table align-items-center mb-0">
                     <thead>
