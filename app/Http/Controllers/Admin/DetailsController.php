@@ -19,24 +19,28 @@ class DetailsController extends Controller
     public function index(Request $request)
     {
         //
-        $Nombre = $request->get('searchfor');
+        try {
+            $Nombre = $request->get('searchfor');
 
-        $categories = DetailsCategory::get();
-        $products = Details::Where('details.product', 'like', "%$Nombre%")
-            ->join('details_categories', 'details.category_id', 'details_categories.id')
-            ->select(
-                'details.id as id',
-                'details.product as product',
-                'details.description as description',
-                'details.price as price',
-                'details.stock as stock',
-                'details.status as status',
-                'details.image as image',
-                'details_categories.id as category_id',
-                'details_categories.category as category'
-            )
-            ->simplePaginate(5);
-        return view('admin.products.index', compact('categories', 'products'));
+            $categories = DetailsCategory::get();
+            $products = Details::Where('details.product', 'like', "%$Nombre%")
+                ->join('details_categories', 'details.category_id', 'details_categories.id')
+                ->select(
+                    'details.id as id',
+                    'details.product as product',
+                    'details.description as description',
+                    'details.price as price',
+                    'details.stock as stock',
+                    'details.status as status',
+                    'details.image as image',
+                    'details_categories.id as category_id',
+                    'details_categories.category as category'
+                )
+                ->simplePaginate(5);
+            return view('admin.products.index', compact('categories', 'products'));
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
 
@@ -48,23 +52,24 @@ class DetailsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $products =  new  Details();
+            if ($request->hasFile('image')) {
+                $products->image = $request->file('image')->store('uploads', 'public');
+            }
 
+            $products->category_id = $request->category_id;
+            $products->product = $request->product;
+            $products->description = $request->description;
+            $products->price = $request->price;
+            $products->stock = $request->stock;
+            $products->status = 1;
+            $products->save();
 
-        $products =  new  Details();
-        if ($request->hasFile('image')) {
-            $products->image = $request->file('image')->store('uploads', 'public');
+            return redirect('/products')->with(['status' => 'Se ha guardado el producto con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-
-        $products->category_id = $request->category_id;
-        $products->product = $request->product;
-        $products->description = $request->description;
-        $products->price = $request->price;
-        $products->stock = $request->stock;
-        $products->status = 1;
-        $products->save();
-
-        return redirect('/products')->with(['status' => 'Se ha guardado el producto con éxito', 'icon' => 'success']);
     }
 
 
@@ -77,23 +82,27 @@ class DetailsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $products = Details::findOrfail($id);
+        try {
+            $products = Details::findOrfail($id);
 
-        if ($request->hasFile('image')) {
-          
-            Storage::delete('public/' . $products->image);
-            $image = $request->file('image')->store('uploads', 'public');           
-            $products->image = $image;            
-        }       
+            if ($request->hasFile('image')) {
 
-        $products->category_id = $request->category_id;
-        $products->product = $request->product;
-        $products->description = $request->description;
-        $products->price = $request->price;
-        $products->stock = $request->stock;
+                Storage::delete('public/' . $products->image);
+                $image = $request->file('image')->store('uploads', 'public');
+                $products->image = $image;
+            }
 
-        $products->update();
-        return redirect('/products')->with(['status' => 'Se ha editado el producto con éxito', 'icon' => 'success']);
+            $products->category_id = $request->category_id;
+            $products->product = $request->product;
+            $products->description = $request->description;
+            $products->price = $request->price;
+            $products->stock = $request->stock;
+
+            $products->update();
+            return redirect('/products')->with(['status' => 'Se ha editado el producto con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -105,15 +114,19 @@ class DetailsController extends Controller
     public function destroy($id)
     {
         //
-        $products = Details::findOrfail($id);
-        $prod_name = $products->product;
-        if (
-            Storage::delete('public/' . $products->image)
+        try {
+            $products = Details::findOrfail($id);
+            $prod_name = $products->product;
+            if (
+                Storage::delete('public/' . $products->image)
 
-        ) {
+            ) {
+                Details::destroy($id);
+            }
             Details::destroy($id);
+            return redirect()->back()->with(['status' => $prod_name . ' se ha borrado el producto con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        Details::destroy($id);
-        return redirect()->back()->with(['status' => $prod_name . ' se ha borrado el producto con éxito', 'icon' => 'success']);
     }
 }

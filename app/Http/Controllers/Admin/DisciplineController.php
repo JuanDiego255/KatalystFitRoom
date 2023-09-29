@@ -22,16 +22,6 @@ class DisciplineController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -40,24 +30,28 @@ class DisciplineController extends Controller
     public function store(Request $request)
     {
         //
-        $campos = [
-            'discipline' => 'required|string|max:100',
-            'description' => 'required|string|max:500',          
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
-        ];
+        try {
+            $campos = [
+                'discipline' => 'required|string|max:100',
+                'description' => 'required|string|max:500',
+                'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido store'];
-        $this->validate($request, $campos, $mensaje);
+            $mensaje = ["required" => 'El :attribute es requerido store'];
+            $this->validate($request, $campos, $mensaje);
 
-        $discipline =  new  Discipline();
-        if ($request->hasFile('image')) {
-            $discipline->image = $request->file('image')->store('uploads', 'public');
+            $discipline =  new  Discipline();
+            if ($request->hasFile('image')) {
+                $discipline->image = $request->file('image')->store('uploads', 'public');
+            }
+            $discipline->discipline = $request->discipline;
+            $discipline->description = $request->description;
+            $discipline->save();
+
+            return redirect('/disciplines')->with(['status' => 'Se ha guardado la disciplina con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        $discipline->discipline = $request->discipline;       
-        $discipline->description = $request->description;              
-        $discipline->save();
-
-        return redirect('/disciplines')->with(['status' => 'Se ha guardado la disciplina con éxito','icon' => 'success']);
     }
 
     /**
@@ -95,28 +89,32 @@ class DisciplineController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $campos = [
-            'discipline' => 'required|string|max:100',
-            'description' => 'required|string|max:500',          
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
-        ];
+        try {
+            $campos = [
+                'discipline' => 'required|string|max:100',
+                'description' => 'required|string|max:500',
+                'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico',
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido store'];
-        $this->validate($request, $campos, $mensaje);
-        if ($request->hasFile('image')) {
-            $discipline = Discipline::findOrfail($id);
+            $mensaje = ["required" => 'El :attribute es requerido store'];
+            $this->validate($request, $campos, $mensaje);
+            if ($request->hasFile('image')) {
+                $discipline = Discipline::findOrfail($id);
 
-            Storage::delete('public/' . $discipline->image);
+                Storage::delete('public/' . $discipline->image);
 
-            $image = $request->file('image')->store('uploads', 'public');
+                $image = $request->file('image')->store('uploads', 'public');
 
-            $discipline->discipline = $request->discipline;       
-            $discipline->description = $request->description;            
-            $discipline->image = $image;
-          
-            $discipline->update();
+                $discipline->discipline = $request->discipline;
+                $discipline->description = $request->description;
+                $discipline->image = $image;
 
-            return redirect('/disciplines')->with(['status' => 'Se ha editado la disciplina con éxito','icon' => 'success']);
+                $discipline->update();
+
+                return redirect('/disciplines')->with(['status' => 'Se ha editado la disciplina con éxito', 'icon' => 'success']);
+            }
+        } catch (\Exception $th) {
+            //throw $th;
         }
     }
 
@@ -129,15 +127,19 @@ class DisciplineController extends Controller
     public function destroy($id)
     {
         //
-        $discipline = Discipline::findOrfail($id);
-        $discipline_name = $discipline->discipline;
-        if (
-            Storage::delete('public/' . $discipline->image)
+        try {
+            $discipline = Discipline::findOrfail($id);
+            $discipline_name = $discipline->discipline;
+            if (
+                Storage::delete('public/' . $discipline->image)
 
-        ) {
+            ) {
+                Discipline::destroy($id);
+            }
             Discipline::destroy($id);
+            return redirect()->back()->with(['status' => $discipline_name . ' se ha borrado la disciplina con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        Discipline::destroy($id);
-        return redirect()->back()->with(['status' => $discipline_name . ' se ha borrado la disciplina con éxito','icon'=>'success']);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -21,10 +22,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //
-        $Nombre = $request->get('searchfor');        
+        $Nombre = $request->get('searchfor');
 
         $users = User::Where('users.name', 'like', "%$Nombre%")
-        ->select(
+            ->select(
                 'users.name as name',
                 'users.id as id',
                 'users.is_routine as is_routine'
@@ -80,9 +81,9 @@ class UserController extends Controller
     {
         //
         $filter_name = $request->get('searchfor');
-        if($request->get('filter')=='0'){
+        if ($request->get('filter') == '0') {
             $filter = 'general_categories.category';
-        }else{
+        } else {
             $filter = 'exercises.exercise';
         }
         $user = User::find($id);
@@ -119,16 +120,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -138,94 +129,64 @@ class UserController extends Controller
     {
 
         // Validar los datos del formulario de registro
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'telephone' => ['required', 'string', 'max:255'],           
-            'identification' => ['required', 'string', 'max:255'],
-        ]);
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'telephone' => ['required', 'string', 'max:255'],
+                'identification' => ['required', 'string', 'max:255'],
+            ]);
 
-        // Crear un nuevo usuario
-        $usuario = new User();
+            // Crear un nuevo usuario
+            $usuario = new User();
 
-        $usuario->name = $request->name;
-        $usuario->identification = $request->identification;
-        $usuario->telephone = $request->telephone;
-        $usuario->whatsapp = $request->whatsapp;
-        $usuario->birthdate = $request->birthdate;
-        $usuario->email = $request->email;
-        $usuario->tutor = $request->tutor;
-        $usuario->blood_type = $request->blood_type;
-        $usuario->address = $request->address;
-        $usuario->injuries = $request->injuries;
-        $usuario->sick = $request->sick;
-        $usuario->height = $request->height;
-        $usuario->weight = $request->weight;
-        $usuario->gender = $request->gender;
-        $usuario->sex = $request->gender;
+            $usuario->name = $request->name;
+            $usuario->identification = $request->identification;
+            $usuario->telephone = $request->telephone;
+            $usuario->whatsapp = $request->whatsapp;
+            $usuario->birthdate = $request->birthdate;
+            $usuario->email = $request->email;
+            $usuario->tutor = $request->tutor;
+            $usuario->blood_type = $request->blood_type;
+            $usuario->address = $request->address;
+            $usuario->injuries = $request->injuries;
+            $usuario->sick = $request->sick;
+            $usuario->height = $request->height;
+            $usuario->weight = $request->weight;
+            $usuario->gender = $request->gender;
+            $usuario->sex = $request->gender;
 
-        if ($request->anemia != null) {
-            $usuario->anemia = 1;
+            if ($request->anemia != null) {
+                $usuario->anemia = 1;
+            }
+            if ($request->suffocation != null) {
+                $usuario->suffocation = 1;
+            }
+            if ($request->asthmatic != null) {
+                $usuario->asthmatic = 1;
+            }
+            if ($request->epileptic != null) {
+                $usuario->epileptic = 1;
+            }
+            if ($request->diabetic != null) {
+                $usuario->diabetic = 1;
+            }
+            if ($request->smoke != null) {
+                $usuario->smoke = 1;
+            }
+            $usuario->dizziness = $request->dizziness;
+            $usuario->fainting = $request->fainting;
+            $usuario->nausea = $request->nausea;
+            $usuario->sport_Activity = $request->sport_Activity;
+            $usuario->contact_emergency = $request->contact_emergency;
+
+            $usuario->password = Hash::make($request->identification);
+            $usuario->save();
+
+            // Redireccionar o realizar cualquier otra acción necesaria
+            return redirect('/users')->with(['status' => 'Usuario registrado exitosamente.', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        if ($request->suffocation != null) {
-            $usuario->suffocation = 1;
-        }
-        if ($request->asthmatic != null) {
-            $usuario->asthmatic = 1;
-        }
-        if ($request->epileptic != null) {
-            $usuario->epileptic = 1;
-        }
-        if ($request->diabetic != null) {
-            $usuario->diabetic = 1;
-        }
-        if ($request->smoke != null) {
-            $usuario->smoke = 1;
-        }
-        $usuario->dizziness = $request->dizziness;
-        $usuario->fainting = $request->fainting;
-        $usuario->nausea = $request->nausea;
-        $usuario->sport_Activity = $request->sport_Activity;
-        $usuario->contact_emergency = $request->contact_emergency;
-
-        $usuario->password = Hash::make($request->identification);
-        $usuario->save();
-
-        // Redireccionar o realizar cualquier otra acción necesaria
-        return redirect('/users')->with(['status' => 'Usuario registrado exitosamente.', 'icon' => 'success']);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
     /**
@@ -237,8 +198,12 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        User::destroy($id);
-        return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito', 'icon' => 'success']);
+        try {
+            User::destroy($id);
+            return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -250,11 +215,15 @@ class UserController extends Controller
     public function destroyRoutine($id)
     {
         //
-        Routine::where('user_id', $id)->delete();
-        $user = User::find($id);
-        $user->is_routine = 0;
-        $user->save();
-        return redirect()->back()->with(['status' => 'Se ha eliminado la rutina con éxito', 'icon' => 'success']);
+        try {
+            Routine::where('user_id', $id)->delete();
+            $user = User::find($id);
+            $user->is_routine = 0;
+            $user->save();
+            return redirect()->back()->with(['status' => 'Se ha eliminado la rutina con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
 
@@ -266,7 +235,6 @@ class UserController extends Controller
     public function routineByCategory($id)
     {
         //
-
         $user_id = Auth::user()->id;
 
         $routines = Routine::where('routines.user_id', $user_id)
@@ -329,8 +297,8 @@ class UserController extends Controller
     public function finishDay($day)
     {
         //
+        DB::beginTransaction();
         try {
-
 
             $user_id = Auth::user()->id;
             $rotuine_days_upd = RoutineDays::where('user_id', $user_id)->get();
@@ -342,8 +310,6 @@ class UserController extends Controller
                 $routine->next_day = 0;
                 $routine->update();
             }
-
-
 
             $routine_Days = RoutineDays::where('user_id', $user_id)
                 ->where('day', $day)->get();
@@ -393,11 +359,12 @@ class UserController extends Controller
                 $routine->completed = 0;
                 $routine->update();
             }
-
+            DB::commit();
 
             return redirect('/my-routine')->with(['status' => 'Día Finalizado.', 'icon' => 'success']);;
         } catch (Exception $e) {
-            //throw $th;
+            //throw $e;
+            DB::beginTransaction();
         }
     }
 }

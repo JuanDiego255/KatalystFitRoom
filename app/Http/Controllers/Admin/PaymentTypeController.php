@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class PaymentTypeController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -22,7 +22,7 @@ class PaymentTypeController extends Controller
         return view('admin.payments.index', compact('payments'));
     }
 
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -32,13 +32,17 @@ class PaymentTypeController extends Controller
     public function store(Request $request)
     {
         //
-        $payment = new PaymentType(); 
-        $payment->type = $request->type;
-        $payment->save();
-        return redirect()->back()->with(['status' => 'Se ha guardado el tipo de pago con éxito','icon' => 'success']);
+        try {
+            $payment = new PaymentType();
+            $payment->type = $request->type;
+            $payment->save();
+            return redirect()->back()->with(['status' => 'Se ha guardado el tipo de pago con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -49,10 +53,14 @@ class PaymentTypeController extends Controller
     public function update($id, Request $request)
     {
         //
-        $payment = PaymentType::find($id);
-        $payment->type = $request->type;
-        $payment->update();
-        return redirect()->back()->with(['status' => 'Se ha editado el tipo de pago con éxito','icon' => 'success']);
+        try {
+            $payment = PaymentType::find($id);
+            $payment->type = $request->type;
+            $payment->update();
+            return redirect()->back()->with(['status' => 'Se ha editado el tipo de pago con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -64,8 +72,11 @@ class PaymentTypeController extends Controller
     public function destroy($id)
     {
         //
-        PaymentType::destroy($id);
-        return redirect()->back()->with(['status' => 'Se ha eliminado el tipo de pago con éxito','icon' => 'success']);
-        
+        try {
+            PaymentType::destroy($id);
+            return redirect()->back()->with(['status' => 'Se ha eliminado el tipo de pago con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 }

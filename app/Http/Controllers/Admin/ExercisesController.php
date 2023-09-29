@@ -45,23 +45,27 @@ class ExercisesController extends Controller
     public function store(Request $request)
     {
         //
-        $campos = [
-            'exercise' => 'required|string|max:100'
-        ];
+        try {
+            $campos = [
+                'exercise' => 'required|string|max:100'
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido store'];
-        $this->validate($request, $campos, $mensaje);
+            $mensaje = ["required" => 'El :attribute es requerido store'];
+            $this->validate($request, $campos, $mensaje);
 
-        $exercise =  new  Exercises();
-        if ($request->hasFile('image')) {
-            $exercise->image = $request->file('image')->store('uploads', 'public');
+            $exercise =  new  Exercises();
+            if ($request->hasFile('image')) {
+                $exercise->image = $request->file('image')->store('uploads', 'public');
+            }
+
+            $exercise->general_category_id = $request->general_category_id;
+            $exercise->exercise = $request->exercise;
+            $exercise->save();
+
+            return redirect('/exercises')->with(['status' => 'Se ha guardado el ejercicio con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-
-        $exercise->general_category_id = $request->general_category_id;
-        $exercise->exercise = $request->exercise;
-        $exercise->save();
-
-        return redirect('/exercises')->with(['status' => 'Se ha guardado el ejercicio con éxito', 'icon' => 'success']);
     }
 
 
@@ -75,25 +79,29 @@ class ExercisesController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $campos = [
-            'exercise' => 'required|string|max:100'
-        ];
+        try {
+            $campos = [
+                'exercise' => 'required|string|max:100'
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
-        $this->validate($request, $campos, $mensaje);
-        $exercise = Exercises::findOrfail($id);
+            $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
+            $this->validate($request, $campos, $mensaje);
+            $exercise = Exercises::findOrfail($id);
 
-        if ($request->hasFile('image')) {
+            if ($request->hasFile('image')) {
 
-            Storage::delete('public/' . $exercise->image);
-            $image = $request->file('image')->store('uploads', 'public');
-            $exercise->image = $image;
+                Storage::delete('public/' . $exercise->image);
+                $image = $request->file('image')->store('uploads', 'public');
+                $exercise->image = $image;
+            }
+            $exercise->general_category_id = $request->general_category_id;
+            $exercise->exercise = $request->exercise;
+            $exercise->update();
+
+            return redirect('/exercises')->with(['status' => 'Se ha editado el ejercicio con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        $exercise->general_category_id = $request->general_category_id;
-        $exercise->exercise = $request->exercise;
-        $exercise->update();
-
-        return redirect('/exercises')->with(['status' => 'Se ha editado el ejercicio con éxito', 'icon' => 'success']);
     }
 
     /**
@@ -105,15 +113,19 @@ class ExercisesController extends Controller
     public function destroy($id)
     {
         //
-        $exercises = Exercises::findOrfail($id);
-        $exer_name = $exercises->exercise;
-        if (
-            Storage::delete('public/' . $exercises->image)
+        try {
+            $exercises = Exercises::findOrfail($id);
+            $exer_name = $exercises->exercise;
+            if (
+                Storage::delete('public/' . $exercises->image)
 
-        ) {
+            ) {
+                Exercises::destroy($id);
+            }
             Exercises::destroy($id);
+            return redirect()->back()->with(['status' => $exer_name . ' se ha borrado el ejercicio con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        Exercises::destroy($id);
-        return redirect()->back()->with(['status' => $exer_name . ' se ha borrado el ejercicio con éxito', 'icon' => 'success']);
     }
 }

@@ -22,16 +22,6 @@ class AsistController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -62,50 +52,5 @@ class AsistController extends Controller
         } catch (Exception $th) {
             throw $th;
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Asist  $asist
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Asist $asist)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Asist  $asist
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Asist $asist)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Asist  $asist
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Asist $asist)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Asist  $asist
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Asist $asist)
-    {
-        //
     }
 }

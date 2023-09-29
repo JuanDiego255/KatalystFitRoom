@@ -16,13 +16,15 @@ class DetailsCategoryController extends Controller
      */
     public function index()
     {
-        //
-        //
-        $categories = DetailsCategory::simplePaginate(3);
-        return view('admin.detail-categories.index', compact('categories'));
+        try {
+            $categories = DetailsCategory::simplePaginate(3);
+            return view('admin.detail-categories.index', compact('categories'));
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -32,13 +34,17 @@ class DetailsCategoryController extends Controller
     public function store(Request $request)
     {
         //
-        $category = new DetailsCategory(); 
-        $category->category = $request->category;
-        $category->save();
-        return redirect()->back()->with(['status' => 'Se ha guardado la categoría con éxito','icon' => 'success']);
+        try {
+            $category = new DetailsCategory();
+            $category->category = $request->category;
+            $category->save();
+            return redirect()->back()->with(['status' => 'Se ha guardado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -48,11 +54,14 @@ class DetailsCategoryController extends Controller
      */
     public function update($id, Request $request)
     {
-        //
-        $category = DetailsCategory::find($id);
-        $category->category = $request->category;
-        $category->update();
-        return redirect()->back()->with(['status' => 'Se ha editado la categoría con éxito','icon' => 'success']);
+        try {
+            $category = DetailsCategory::find($id);
+            $category->category = $request->category;
+            $category->update();
+            return redirect()->back()->with(['status' => 'Se ha editado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -64,8 +73,11 @@ class DetailsCategoryController extends Controller
     public function destroy($id)
     {
         //
-        DetailsCategory::destroy($id);
-        return redirect()->back()->with(['status' => 'Se ha eliminado la categoría con éxito','icon' => 'success']);
-        
+        try {
+            DetailsCategory::destroy($id);
+            return redirect()->back()->with(['status' => 'Se ha eliminado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
+        }
     }
 }

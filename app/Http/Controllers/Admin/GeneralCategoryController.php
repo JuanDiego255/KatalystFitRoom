@@ -22,16 +22,6 @@ class GeneralCategoryController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -39,46 +29,28 @@ class GeneralCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         //
-        $campos = [
-            'category' => 'required|string|max:100'           
-        ];
+        try {
+            $campos = [
+                'category' => 'required|string|max:100'
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido store'];
-        $this->validate($request, $campos, $mensaje);
+            $mensaje = ["required" => 'El :attribute es requerido store'];
+            $this->validate($request, $campos, $mensaje);
 
-        $category =  new  GeneralCategory();
-        if ($request->hasFile('image')) {
-            $category->image = $request->file('image')->store('uploads', 'public');
+            $category =  new  GeneralCategory();
+            if ($request->hasFile('image')) {
+                $category->image = $request->file('image')->store('uploads', 'public');
+            }
+
+            $category->category = $request->category;
+            $category->save();
+
+            return redirect('/categories')->with(['status' => 'Se ha guardado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-
-        $category->category = $request->category;
-        $category->save();
-
-        return redirect('/categories')->with(['status' => 'Se ha guardado la categoría con éxito', 'icon' => 'success']);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -91,23 +63,27 @@ class GeneralCategoryController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $campos = [
-            'category' => 'required|string|max:100'           
-        ];
+        try {
+            $campos = [
+                'category' => 'required|string|max:100'
+            ];
 
-        $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
-        $this->validate($request, $campos, $mensaje);
-        $category = GeneralCategory::findOrfail($id);
+            $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
+            $this->validate($request, $campos, $mensaje);
+            $category = GeneralCategory::findOrfail($id);
 
-        if ($request->hasFile('image')) {           
+            if ($request->hasFile('image')) {
 
-            Storage::delete('public/' . $category->image);
-            $image = $request->file('image')->store('uploads', 'public');   
-            $category->image = $image;          
+                Storage::delete('public/' . $category->image);
+                $image = $request->file('image')->store('uploads', 'public');
+                $category->image = $image;
+            }
+            $category->category = $category->category;
+            $category->update();
+            return redirect('/categories')->with(['status' => 'Se ha editado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        $category->category = $category->category;    
-        $category->update();
-        return redirect('/categories')->with(['status' => 'Se ha editado la categoría con éxito','icon' => 'success']);
     }
 
     /**
@@ -119,15 +95,19 @@ class GeneralCategoryController extends Controller
     public function destroy($id)
     {
         //
-        $category = GeneralCategory::findOrfail($id);
-        $category_name = $category->category;
-        if (
-            Storage::delete('public/' . $category->image)
+        try {
+            $category = GeneralCategory::findOrfail($id);
+            $category_name = $category->category;
+            if (
+                Storage::delete('public/' . $category->image)
 
-        ) {
+            ) {
+                GeneralCategory::destroy($id);
+            }
             GeneralCategory::destroy($id);
+            return redirect()->back()->with(['status' => $category_name . ' se ha borrado la categoría con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
-        GeneralCategory::destroy($id);
-        return redirect()->back()->with(['status' => $category_name . ' se ha borrado la categoría con éxito','icon'=>'success']);
     }
 }
