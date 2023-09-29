@@ -77,6 +77,7 @@ Route::group(['auth'], function () {
         Route::get('/register-user', [UserController::class, 'newUser']);
         Route::post('/register-create', [UserController::class, 'store']);
         Route::delete('/delete/user/{id}', [UserController::class, 'destroy']);
+        Route::delete('/delete/routine/{id}', [UserController::class, 'destroyRoutine']);
         Route::post('/end-day/{id}', [UserController::class, 'finishDay']);
 
         //Routes for Metatags

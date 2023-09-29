@@ -241,6 +241,22 @@ class UserController extends Controller
         return redirect()->back()->with(['status' => 'Se ha eliminado el usuario con éxito', 'icon' => 'success']);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyRoutine($id)
+    {
+        //
+        Routine::where('user_id', $id)->delete();
+        $user = User::find($id);
+        $user->is_routine = 0;
+        $user->save();
+        return redirect()->back()->with(['status' => 'Se ha eliminado la rutina con éxito', 'icon' => 'success']);
+    }
+
 
     /**
      * Display a listing of the resource.

@@ -72,6 +72,15 @@
                                                 class="btn bg-gradient-safewor-black text-white">Días De Rutina</a>
                                             <a href="{{ url('create-word/' . $user->id) }}"
                                                 class="btn bg-gradient-safewor-black text-white">Descargar Rutina</a>
+                                            <form method="post" action="{{ url('/delete/routine/' . $user->id) }}"
+                                                style="display:inline">
+                                                {{ csrf_field() }}
+                                                {{ method_field('DELETE') }}
+                                                <button class="btn bg-gradient-safewor-red text-white" type="submit"
+                                                    onclick="return confirm('Deseas borrar esta rutina (Se borrarán todas las rutinas existentes)?')">Borrar
+                                                    Rutina
+                                                </button>
+                                            </form>
                                         @endif
 
 
@@ -80,7 +89,7 @@
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
                                             <button class="btn bg-gradient-safewor-red text-white" type="submit"
-                                                onclick="return confirm('Deseas borrar este usuario?')">Borrar
+                                                onclick="return confirm('Deseas borrar este usuario?')">Borrar Usuario
                                             </button>
                                         </form>
                                     </center>
