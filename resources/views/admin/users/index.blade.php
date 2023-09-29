@@ -26,7 +26,12 @@
                         <tr>
                             <th class="text-left text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Usuario</th>
-
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                Cambio Rutina</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                Peso</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                Teléfono</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Acciones</th>
                             <th class="text-secondary opacity-7"></th>
@@ -49,6 +54,17 @@
                                     </div>
 
                                 </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <h6 class="text-center mb-0">
+                                        {{ isset($user->change_routine) ? 'Fecha: ' . $user->change_routine : 'Sin Rutina' }}
+                                    </h6>
+                                </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <h6 class="text-center mb-0">{{ $user->weight }} Kg</h6>
+                                </td>
+                                <td class="align-middle text-xxs text-center">
+                                    <h6 class="text-center mb-0">{{ $user->telephone }}</h6>
+                                </td>
 
                                 <td class="align-middle">
                                     <center>
@@ -58,27 +74,45 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
                                                     value="{{ $user->id }}">
-                                                <input type="hidden" id="type" name="type" value="0">
+                                                <input type="hidden" id="type" name="type" value="0">                                               
                                                 <button
                                                     onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')"
-                                                    class="btn bg-gradient-safewor-black text-white" type="submit">Crear
-                                                    Rutina
+                                                    class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Crear Rutina"
+                                                    data-container="body" data-animation="true" type="submit">
+                                                    <i class="material-icons opacity-10">add_circle</i></a>
                                                 </button>
                                             </form>
                                         @else
                                             <a href="{{ url('user/routine/' . $user->id) }}"
-                                                class="btn bg-gradient-safewor-black text-white">Ver Rutina</a>
+                                                class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Ver Rutina"
+                                                data-container="body" data-animation="true">
+                                                <i class="material-icons opacity-10">visibility</i></a>
+                                            <a href="{{ url('user/asign/' . $user->id) }}"
+                                                class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Rutina"
+                                                data-container="body" data-animation="true">
+                                                <i class="material-icons opacity-10">file_copy</i></a>
                                             <a href="{{ url('user/routine-day/' . $user->id) }}"
-                                                class="btn bg-gradient-safewor-black text-white">Días De Rutina</a>
+                                                class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Días De Rutina"
+                                                data-container="body" data-animation="true">
+                                                <i class="material-icons opacity-10">date_range</i></a>
                                             <a href="{{ url('create-word/' . $user->id) }}"
-                                                class="btn bg-gradient-safewor-black text-white">Descargar Rutina</a>
+                                                class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Descargar Rutina"
+                                                data-container="body" data-animation="true">
+                                                <i class="material-icons opacity-10">download</i></a>
                                             <form method="post" action="{{ url('/delete/routine/' . $user->id) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 {{ method_field('DELETE') }}
-                                                <button class="btn bg-gradient-safewor-red text-white" type="submit"
-                                                    onclick="return confirm('Deseas borrar esta rutina (Se borrarán todas las rutinas existentes)?')">Borrar
-                                                    Rutina
+                                                <button class="btn bg-gradient-safewor-red text-white btn-tooltip"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Borrar Rutina"
+                                                    data-container="body" data-animation="true" type="submit"
+                                                    onclick="return confirm('Deseas borrar esta rutina (Se borrarán todas las rutinas existentes)?')">
+                                                    <i class="material-icons opacity-10">delete_sweep</i>
                                                 </button>
                                             </form>
                                         @endif
@@ -88,8 +122,11 @@
                                             style="display:inline">
                                             {{ csrf_field() }}
                                             {{ method_field('DELETE') }}
-                                            <button class="btn bg-gradient-safewor-red text-white" type="submit"
-                                                onclick="return confirm('Deseas borrar este usuario?')">Borrar Usuario
+                                            <button class="btn bg-gradient-safewor-red text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Borrar Usuario"
+                                                data-container="body" data-animation="true" type="submit"
+                                                onclick="return confirm('Deseas borrar este usuario?')"> <i
+                                                    class="material-icons opacity-10">person_remove</i>
                                             </button>
                                         </form>
                                     </center>

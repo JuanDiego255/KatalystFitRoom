@@ -28,7 +28,10 @@ class UserController extends Controller
             ->select(
                 'users.name as name',
                 'users.id as id',
-                'users.is_routine as is_routine'
+                'users.is_routine as is_routine',
+                'users.change_routine as change_routine',
+                'users.weight as weight',
+                'users.telephone as telephone'
             )->orderBy('users.name', 'asc')->simplePaginate(7);
         return view('admin.users.index', compact('users'));
     }
@@ -219,6 +222,7 @@ class UserController extends Controller
             Routine::where('user_id', $id)->delete();
             $user = User::find($id);
             $user->is_routine = 0;
+            $user->change_routine = null;
             $user->save();
             return redirect()->back()->with(['status' => 'Se ha eliminado la rutina con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
@@ -366,5 +370,26 @@ class UserController extends Controller
             //throw $e;
             DB::beginTransaction();
         }
+    }
+
+    public function showUserWithoutRoutine($id, Request $request)
+    {
+        $Nombre = $request->get('searchfor');
+
+        $users = User::Where('users.name', 'like', "%$Nombre%")
+            ->Where('users.is_routine', 0)
+            ->select(
+                'users.name as name',
+                'users.id as id',
+                'users.is_routine as is_routine',
+                'users.change_routine as change_routine',
+                'users.weight as weight',
+                'users.telephone as telephone'
+            )->orderBy('users.name', 'asc')->simplePaginate(7);
+
+        if ($users->isEmpty()) {
+            return redirect()->back()->with(['status' => 'No hay usuarios sin rutina', 'icon' => 'warning']);
+        }
+        return view('admin.users.asign-user', compact('users', 'id'));
     }
 }

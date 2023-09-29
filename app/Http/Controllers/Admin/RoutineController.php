@@ -16,6 +16,7 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\SimpleType\Jc;
 use PhpOffice\PhpWord\Style\Language;
+use PhpParser\Node\Stmt\TryCatch;
 
 class RoutineController extends Controller
 {
@@ -221,6 +222,40 @@ class RoutineController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
+        }
+    }
+
+    public function asignRoutine(Request $request)
+    {
+        try {
+            $last_number = Routine::where('user_id', $request->id)->max('routine_number');
+            $previousRoutine = Routine::where('user_id', $request->id)
+                ->where('routine_number', $last_number)
+                ->get();
+
+            foreach ($previousRoutine as $routine_item) {
+                $routine = new Routine();
+                $routine->user_id = $request->asign;
+                $routine->general_category_id = $routine_item->general_category_id;
+                $routine->exercise_id = $routine_item->exercise_id;
+                $routine->alt = $routine_item->alt;
+                $routine->series = $routine_item->series;
+                $routine->reps = $routine_item->reps;
+                $routine->day = $routine_item->day;
+                $routine->keep_exercise = $routine_item->keep_exercise;
+                $routine->status = 1;
+                $routine->routine_number = 0;
+                $routine->save();
+            }
+            date_default_timezone_set('America/Chihuahua');
+            $date = date("Y-m-d", strtotime("+1 month"));
+            $user = User::find($request->asign);
+            $user->is_routine = 1;
+            $user->change_routine = $date;
+            $user->save();
+            return redirect('users')->with(['status' => 'Se ha asignado la rutina con éxito', 'icon' => 'success']);
+        } catch (\Exception $th) {
+            //throw $th;
         }
     }
 

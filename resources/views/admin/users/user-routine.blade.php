@@ -46,21 +46,17 @@
                 <form method="post" action="{{ url('/create/routine/') }}" style="display:inline">
                     {{ csrf_field() }}
                     <input type="hidden" id="id" name="id" value="{{ $id }}">
-                    <input type="hidden" id="type" name="type" value="0">
+                    <input type="hidden" id="type" name="type" value="0">                    
                     <button class="dropdown-item" type="submit">Crear Rutina De Cero
                     </button>
                 </form>
             </li>
             <li>
                 <button type="button" data-bs-toggle="modal" data-bs-target="#quantity-exercises"
-                    class="dropdown-item">Generar Rutina Aleatoria</button><br><br>
-                {{-- <form method="post" action="{{ url('/create/routine/') }}" style="display:inline">
-                    {{ csrf_field() }}
-                    <input type="hidden" id="id" name="id" value="{{ $id }}">
-                    <input type="hidden" id="type" name="type" value="1">
-                    <button class="dropdown-item" type="submit">Generar Rutina Aleatoria
-                    </button>
-                </form> --}}
+                    class="dropdown-item">Generar Rutina Aleatoria</button>
+            </li>
+            <li>
+                <a href="{{ url('user/asign/' . $id) }}" class="dropdown-item">Asignar Rutina</a>
             </li>
 
         </ul>
@@ -188,8 +184,8 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
 
-                                            <input onchange="updateKeep(this.checked,{{ $routine->id }})"
-                                                class="keep" type="checkbox" value="" id="keep"
+                                            <input onchange="updateKeep(this.checked,{{ $routine->id }})" class="keep"
+                                                type="checkbox" value="" id="keep"
                                                 @if ($routine->keep_exercise == 1) checked="" @endif>
 
                                         </p>

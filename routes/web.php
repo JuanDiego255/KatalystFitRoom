@@ -66,6 +66,7 @@ Route::group(['auth'], function () {
         Route::get('/users', [UserController::class, 'index']);
 
         Route::post('create/routine', [RoutineController::class, 'store']);
+        Route::post('asign/routine', [RoutineController::class, 'asignRoutine']);
         Route::post('/update-routine', [RoutineController::class, 'update']);
         Route::post('/update-routine-status', [RoutineController::class, 'updateStatus']);
         Route::post('/update-routine-keep', [RoutineController::class, 'updateKeep']);
@@ -73,6 +74,7 @@ Route::group(['auth'], function () {
         Route::post('/update-routine-form', [RoutineController::class, 'updateForm']);
         Route::put('/update-description/routine/{id}', [RoutineController::class, 'updateDescription']);
         Route::get('/user/routine/{id}', [UserController::class, 'showRoutine']);
+        Route::get('/user/asign/{id}', [UserController::class, 'showUserWithoutRoutine']);
         Route::get('/user/routine-day/{id}', [UserController::class, 'showRoutineDays']);
         Route::get('/register-user', [UserController::class, 'newUser']);
         Route::post('/register-create', [UserController::class, 'store']);
