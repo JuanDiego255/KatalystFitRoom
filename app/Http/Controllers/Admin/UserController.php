@@ -108,6 +108,7 @@ class UserController extends Controller
                 'routines.day as day',
                 'routines.description as description',
                 'routines.status as status',
+                'routines.keep_exercise as keep_exercise',
                 'routines.id as id',
 
             )->orderBy('routines.day', 'desc')

@@ -124,7 +124,7 @@ class RoutineController extends Controller
                     ->get();
 
                 foreach ($previousRoutine as $routine) {
-                    if ($routine->day != 0 && $request->quantity != $count_exer_active) {
+                    if ($routine->day != 0 && $request->quantity != $count_exer_active && $routine->keep_exercise != 1) {
                         $new_routine[] = [
                             "user_id" => $request->id,
                             "general_category_id" => $routine->general_category_id,
@@ -133,6 +133,7 @@ class RoutineController extends Controller
                             "series" => $routine->series,
                             "reps" => $routine->reps,
                             "day" => $routine->day,
+                            "keep_exercise" => $routine->keep_exercise,
                             "status" => 1,
                             "routine_number" => $last_number_opc,
                         ];
@@ -175,6 +176,7 @@ class RoutineController extends Controller
                             $routine->series = $new_routine_value['series'];
                             $routine->reps = $new_routine_value['reps'];
                             $routine->day = $new_routine_value['day'];
+                            $routine->keep_exercise = $new_routine_value['keep_exercise'];
                             $routine->status = 1;
                             $routine->routine_number = $last_number_opc;
                             $set_routine = true;
@@ -211,6 +213,7 @@ class RoutineController extends Controller
                         $routine->series = $routine_item->series;
                         $routine->reps = $routine_item->reps;
                         $routine->day = $routine_item->day;
+                        $routine->keep_exercise = $routine_item->keep_exercise;
                         $routine->status = 1;
                         $routine->routine_number = $last_number_opc;
                         $set_routine = true;
@@ -359,6 +362,29 @@ class RoutineController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function updateKeep(Request $request)
+    {
+        //
+
+        $valor = $request->val;
+
+        $id = $request->id;
+        $routine = Routine::where('id', $id)->first();
+
+        $routine->keep_exercise = $valor;
+
+        $routine->update();
+
+        return response()->json(['status' => 'Se modificó el estado con éxito', 'icon' => 'success']);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function updateForm(Request $request)
     {
         //
@@ -486,13 +512,13 @@ class RoutineController extends Controller
             'height' => 40
         ));
 
-        $seccion->addTextBreak(); 
+        $seccion->addTextBreak();
 
         $seccion->addText("Datos del usuario", $fuenteTitle);
 
-        $seccion->addText("Nombre: ".$user->name, $fuenteNormal);
-        $seccion->addText("Peso: ".$user->weight.'Kg', $fuenteNormal);
-        $seccion->addText("Cambio de Rutina: ".$user->change_routine, $fuenteNormal);
+        $seccion->addText("Nombre: " . $user->name, $fuenteNormal);
+        $seccion->addText("Peso: " . $user->weight . 'Kg', $fuenteNormal);
+        $seccion->addText("Cambio de Rutina: " . $user->change_routine, $fuenteNormal);
 
         $estiloTabla = [
             "borderColor" => "000000",
@@ -503,9 +529,9 @@ class RoutineController extends Controller
         ];
 
         $documento->addTableStyle("estilo3", $estiloTabla);
-        $tabla = $seccion->addTable("estilo3");      
+        $tabla = $seccion->addTable("estilo3");
 
-        
+
 
         $categoryGroups = []; // Para almacenar categorías únicas
 
@@ -562,7 +588,7 @@ class RoutineController extends Controller
             }
         }
 
-        $seccion->addTextBreak();    
+        $seccion->addTextBreak();
 
         $seccion->addText("Importante:", $fuenteTitle);
 

@@ -104,6 +104,8 @@
                                     Día</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Descripción</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Mantener</th>
 
                                 <th class="text-secondary opacity-7"></th>
                             </tr>
@@ -182,6 +184,15 @@
                                             class="btn bg-gradient-safewor-red text-white"
                                             style="text-decoration: none;"><i
                                                 class="material-icons opacity-10">edit_note</i></button>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <p class=" font-weight-bold mb-0">
+
+                                            <input onchange="updateKeep(this.checked,{{ $routine->id }})"
+                                                class="keep" type="checkbox" value="" id="keep"
+                                                @if ($routine->keep_exercise == 1) checked="" @endif>
+
+                                        </p>
                                     </td>
 
 
@@ -293,6 +304,30 @@
                 data: {
 
                     'val': status,
+                    'id': id,
+                },
+                success: function(response) {
+
+                }
+            });
+        }
+
+        function updateKeep(val, id) {
+            var keep = 0;
+            if (val) {
+                keep = 1;
+            }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "/update-routine-keep",
+                data: {
+
+                    'val': keep,
                     'id': id,
                 },
                 success: function(response) {
