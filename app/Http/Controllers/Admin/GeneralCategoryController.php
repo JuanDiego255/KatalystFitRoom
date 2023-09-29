@@ -42,8 +42,7 @@ class GeneralCategoryController extends Controller
         
         //
         $campos = [
-            'category' => 'required|string|max:100',
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'category' => 'required|string|max:100'           
         ];
 
         $mensaje = ["required" => 'El :attribute es requerido store'];
@@ -93,28 +92,22 @@ class GeneralCategoryController extends Controller
     {
         //
         $campos = [
-            'category' => 'required|string|max:100',
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'category' => 'required|string|max:100'           
         ];
 
         $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
         $this->validate($request, $campos, $mensaje);
+        $category = GeneralCategory::findOrfail($id);
 
-        if ($request->hasFile('image')) {
-            $category = GeneralCategory::findOrfail($id);
+        if ($request->hasFile('image')) {           
 
             Storage::delete('public/' . $category->image);
-
-            $image = $request->file('image')->store('uploads', 'public');
-
-            $category->category = $category->category;     
-                  
-            $category->image = $image;
-          
-            $category->update();
-
-            return redirect('/categories')->with(['status' => 'Se ha editado la categoría con éxito','icon' => 'success']);
+            $image = $request->file('image')->store('uploads', 'public');   
+            $category->image = $image;          
         }
+        $category->category = $category->category;    
+        $category->update();
+        return redirect('/categories')->with(['status' => 'Se ha editado la categoría con éxito','icon' => 'success']);
     }
 
     /**

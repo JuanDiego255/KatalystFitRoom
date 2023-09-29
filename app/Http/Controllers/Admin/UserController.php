@@ -129,15 +129,8 @@ class UserController extends Controller
         // Validar los datos del formulario de registro
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'telephone' => ['required', 'string', 'max:255'],
-            'birthdate' => ['required', 'string', 'max:255'],
-
-            'telephone' => ['required', 'string', 'max:255'],
-            'whatsapp' => ['required', 'string', 'max:255'],
-            'tutor' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-
+            'telephone' => ['required', 'string', 'max:255'],           
+            'identification' => ['required', 'string', 'max:255'],
         ]);
 
         // Crear un nuevo usuario

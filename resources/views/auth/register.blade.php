@@ -77,7 +77,7 @@ is-invalid
                                             class="form-control form-control-lg @error('whatsapp')
 is-invalid
 @enderror"
-                                            name="whatsapp" value="{{ old('whatsapp') }}" required autocomplete="whatsapp"
+                                            name="whatsapp" value="{{ old('whatsapp') }}" autocomplete="whatsapp"
                                             autofocus>
                                         <span class="input-group-text" id="basic-addon2">506XXXXXXXX</span>
 
@@ -109,7 +109,7 @@ is-invalid
                                         <label class="form-label">Correo</label>
                                         <input id="email" type="email"
                                             class="form-control form-control-lg @error('email') is-invalid @enderror"
-                                            name="email" value="{{ old('email') }}" required autocomplete="email">
+                                            name="email" value="{{ old('email') }}" autocomplete="email">
 
                                         @error('email')
                                             <span class="invalid-feedback" role="alert">
@@ -125,7 +125,7 @@ is-invalid
                                         <label class="form-label">Tutor</label>
                                         <input id="tutor" type="text"
                                             class="form-control form-control-lg @error('tutor') is-invalid @enderror"
-                                            name="tutor" value="{{ old('tutor') }}" required autocomplete="tutor"
+                                            name="tutor" value="{{ old('tutor') }}" autocomplete="tutor"
                                             autofocus>
 
                                         @error('tutor')
@@ -142,7 +142,7 @@ is-invalid
                                         <label>Tipo Sangre</label>
                                         <select id="blood_type" name="blood_type"
                                             class="form-control form-control-lg @error('blood_type') is-invalid @enderror"
-                                            required autocomplete="local_id" autofocus>
+                                             autocomplete="local_id" autofocus>
                                             <option value="Sin Especificar" selected>Sin Especificar</option>
 
                                             <option value="O+">O+
@@ -176,7 +176,7 @@ is-invalid
                                         <label class="form-label">Dirección</label>
                                         <input id="address" type="text"
                                             class="form-control form-control-lg @error('address') is-invalid @enderror"
-                                            name="address" value="{{ old('address') }}" required autocomplete="address"
+                                            name="address" value="{{ old('address') }}" autocomplete="address"
                                             autofocus>
 
                                         @error('address')
@@ -403,7 +403,7 @@ is-invalid
                                             class="form-control form-control-lg @error('contact_emergency')
 is-invalid
 @enderror"
-                                            name="contact_emergency" value="{{ old('contact_emergency') }}" required
+                                            name="contact_emergency" value="{{ old('contact_emergency') }}"
                                             autocomplete="contact_emergency" autofocus>
                                         <span class="input-group-text" id="basic-addon2">506XXXXXXXX</span>
 
@@ -414,8 +414,6 @@ is-invalid
                                         @enderror
                                     </div>
                                 </div>
-
-
                             </div>
 
 
@@ -425,8 +423,6 @@ is-invalid
                                         {{ __('Crear Cuenta') }}
                                     </button>
                                 </div>
-
-
                             </div>
 
                         </form>

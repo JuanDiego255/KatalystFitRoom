@@ -67,7 +67,8 @@
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <img class="img-fluid img-thumbnail ml-2"
-                                        src="{{ asset('storage') . '/' . $category->image }}" alt=""
+                                    src="@if ($category->image != null) {{ asset('storage') . '/' . $category->image }} @else
+                                    {{ url('images/sin-foto.PNG') }} @endif" alt=""
                                         width="100">
                                 </td>
 

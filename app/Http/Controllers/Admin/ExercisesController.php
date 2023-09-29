@@ -19,20 +19,20 @@ class ExercisesController extends Controller
     public function index(Request $request)
     {
         //
-        $Nombre = $request->get('searchfor');   
-       
+        $Nombre = $request->get('searchfor');
+
         $categories = GeneralCategory::get();
-        $exercises = Exercises::Where('general_categories.category', 'like', "%$Nombre%")        
-        ->join('general_categories','exercises.general_category_id','general_categories.id')
-        ->select(
-            'exercises.id as id',
-            'exercises.exercise as exercise',
-            'exercises.image as image',
-            'general_categories.id as gen_category_id',
-            'general_categories.category as gen_category'
-        )
-        ->simplePaginate(5);
-        return view('admin.exercises.index', compact('categories','exercises'));
+        $exercises = Exercises::Where('general_categories.category', 'like', "%$Nombre%")
+            ->join('general_categories', 'exercises.general_category_id', 'general_categories.id')
+            ->select(
+                'exercises.id as id',
+                'exercises.exercise as exercise',
+                'exercises.image as image',
+                'general_categories.id as gen_category_id',
+                'general_categories.category as gen_category'
+            )
+            ->simplePaginate(5);
+        return view('admin.exercises.index', compact('categories', 'exercises'));
     }
 
 
@@ -46,8 +46,7 @@ class ExercisesController extends Controller
     {
         //
         $campos = [
-            'exercise' => 'required|string|max:100',
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'exercise' => 'required|string|max:100'
         ];
 
         $mensaje = ["required" => 'El :attribute es requerido store'];
@@ -57,7 +56,7 @@ class ExercisesController extends Controller
         if ($request->hasFile('image')) {
             $exercise->image = $request->file('image')->store('uploads', 'public');
         }
-       
+
         $exercise->general_category_id = $request->general_category_id;
         $exercise->exercise = $request->exercise;
         $exercise->save();
@@ -77,30 +76,24 @@ class ExercisesController extends Controller
     {
         //
         $campos = [
-            'exercise' => 'required|string|max:100',
-            'image' => 'required|max:10000|mimes:jpeg,png,jpg,ico'
+            'exercise' => 'required|string|max:100'
         ];
-        
 
         $mensaje = ["required" => 'El :attribute es requerido ' . $id . ' update'];
         $this->validate($request, $campos, $mensaje);
+        $exercise = Exercises::findOrfail($id);
 
         if ($request->hasFile('image')) {
-            $exercise = Exercises::findOrfail($id);           
 
             Storage::delete('public/' . $exercise->image);
-
             $image = $request->file('image')->store('uploads', 'public');
-
-           
-            $exercise->general_category_id = $request->general_category_id;
-            $exercise->exercise = $request->exercise;  
             $exercise->image = $image;
-          
-            $exercise->update();
-
-            return redirect('/exercises')->with(['status' => 'Se ha editado el ejercicio con éxito','icon' => 'success']);
         }
+        $exercise->general_category_id = $request->general_category_id;
+        $exercise->exercise = $request->exercise;
+        $exercise->update();
+
+        return redirect('/exercises')->with(['status' => 'Se ha editado el ejercicio con éxito', 'icon' => 'success']);
     }
 
     /**
@@ -121,6 +114,6 @@ class ExercisesController extends Controller
             Exercises::destroy($id);
         }
         Exercises::destroy($id);
-        return redirect()->back()->with(['status' => $exer_name . ' se ha borrado el ejercicio con éxito','icon'=>'success']);
+        return redirect()->back()->with(['status' => $exer_name . ' se ha borrado el ejercicio con éxito', 'icon' => 'success']);
     }
 }
