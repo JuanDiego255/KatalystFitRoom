@@ -84,6 +84,7 @@ class RoutineController extends Controller
 
             $last_number = Routine::where('user_id', $request->id)->max('routine_number');
             $count_exer_active = 0;
+            $error_save = 0;
             $new_routine = [];
             $message_error_quantity = false;
 
@@ -203,8 +204,14 @@ class RoutineController extends Controller
                     }
                     if ($set_routine) {
                         $routine->save();
+                        $error_save++;
                     }
                 }
+            }
+
+            if($error_save == 0){
+                DB::rollback();
+                return redirect()->back()->with(['status' => 'Hubo un error generando la rutina, se reversaron los cambios.', 'icon' => 'error']);
             }
 
             date_default_timezone_set('America/Chihuahua');
@@ -222,6 +229,7 @@ class RoutineController extends Controller
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
+            return redirect()->back()->with(['status' => 'Hubo un error generando la rutina, se reversaron los cambios.', 'icon' => 'error']);
         }
     }
 

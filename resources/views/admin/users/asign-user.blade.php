@@ -57,10 +57,11 @@
                                                 style="display:inline">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
-                                                    value="{{ $id }}">                                                
-                                                <input type="hidden" id="asign" name="asign" value="{{$user->id}}">
-                                                
-                                                <button class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                    value="{{ $id }}">
+                                                <input type="hidden" id="asign" name="asign"
+                                                    value="{{ $user->id }}">
+
+                                                <button class="btn bg-gradient-safewor-red text-white btn-tooltip"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Asignar Rutina"
                                                     data-container="body" data-animation="true" type="submit">
                                                     Asignar Rutina</a>
@@ -76,6 +77,17 @@
                     </table>
                 </div>
             </div>
+
+            <div class="row">
+
+                <div class="col-md-12 text-center">
+                    <a href="{{ url('users') }}" class="btn bg-gradient-safewor-black text-white w-50">
+                        {{ __('Cancelar') }}
+                    </a>
+                </div>
+
+            </div>
+
             {{ $users ?? ('')->links('pagination::simple-bootstrap-4') }}
 
 
