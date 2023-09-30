@@ -10,7 +10,7 @@
 
 
     </div>
-    <div class="row w-50">
+    <div class="row w-75">
 
         <div class="col-md-6 mb-3">
             <form class="form-inline">

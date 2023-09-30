@@ -100,6 +100,7 @@ class RoutineController extends Controller
                     $routine->status = 1;
                     $routine->routine_number = $last_number_opc;
                     $routine->save();
+                    $error_save++;
                 }
             } else {
                 $exercise_active = 0;
