@@ -15,8 +15,9 @@
         </div>
     </form>
 
-    <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-red text-white">Nuevo Usuario</a><br><br>
-
+    <a href="{{ url('/register-user') }}" class="btn bg-gradient-safewor-red text-white">Nuevo Usuario</a>
+    <h6>Es recomendable tener creados todos los ejercicios antes de generar las rutinas, ya que los ejercicios guardados
+        recientemente, no aparecerán en las rutinas ya creadas, al menos que generen las rutinas desde 0.</h6>
     <center>
 
         <div class="card w-100 mb-4">
