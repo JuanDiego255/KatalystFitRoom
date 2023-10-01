@@ -56,7 +56,16 @@
                                 </td>
                                 <td class="align-middle text-xxs text-center">
                                     <h6 class="text-center mb-0">
-                                        {{ isset($user->change_routine) ? 'Fecha: ' . $user->change_routine : 'Sin Rutina' }}
+                                        @if (isset($user->change_routine) && $user->change_routine <= $date)
+                                            <span
+                                                class="badge bg-gradient-danger animacion">{{ isset($user->change_routine) ? 'Fecha: ' . $user->change_routine : 'Sin Rutina' }}
+                                            </span>
+                                        @else
+                                            <span
+                                                class="badge bg-gradient-info">{{ isset($user->change_routine) ? 'Fecha: ' . $user->change_routine : 'Sin Rutina' }}
+                                            </span>
+                                        @endif
+
                                     </h6>
                                 </td>
                                 <td class="align-middle text-xxs text-center">
@@ -74,7 +83,7 @@
                                                 {{ csrf_field() }}
                                                 <input type="hidden" id="id" name="id"
                                                     value="{{ $user->id }}">
-                                                <input type="hidden" id="type" name="type" value="0">                                               
+                                                <input type="hidden" id="type" name="type" value="0">
                                                 <button
                                                     onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')"
                                                     class="btn bg-gradient-safewor-black text-white btn-tooltip"

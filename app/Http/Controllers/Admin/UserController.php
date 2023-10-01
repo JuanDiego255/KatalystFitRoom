@@ -23,6 +23,8 @@ class UserController extends Controller
     {
         //
         $Nombre = $request->get('searchfor');
+        date_default_timezone_set('America/Chihuahua');
+        $date = date("Y-m-d");
 
         $users = User::Where('users.name', 'like', "%$Nombre%")
             ->select(
@@ -33,7 +35,7 @@ class UserController extends Controller
                 'users.weight as weight',
                 'users.telephone as telephone'
             )->orderBy('users.name', 'asc')->simplePaginate(7);
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users','date'));
     }
 
     /**
