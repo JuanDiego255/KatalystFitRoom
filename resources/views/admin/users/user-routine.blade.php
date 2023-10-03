@@ -41,8 +41,8 @@
         <div class="col-md-6">
             <div class="input-group input-group-lg input-group-static my-3 w-100">
                 <label>Filtrar</label>
-                <input value="" placeholder="Escribe para filtrar...." type="text" class="form-control form-control-lg" name="searchfor"
-                    id="searchfor">
+                <input value="" placeholder="Escribe para filtrar...." type="text"
+                    class="form-control form-control-lg" name="searchfor" id="searchfor">
             </div>
         </div>
         <div class="col-md-6">
@@ -329,12 +329,30 @@
         var dataTable = $('#routines').DataTable({
             searching: true,
             lengthChange: false,
-            "columnDefs": [
-            {
-                "targets": [2,3,4,5,6,8], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
-                "orderable": false // Deshabilita la ordenación para la columna específica
-            }
-        ]
+            "columnDefs": [{
+                    "targets": [2, 3, 4, 5,
+                        6
+                    ], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
+                    "orderable": false // Deshabilita la ordenación para la columna específica
+                },
+                {
+                    "targets": [8], // Índice de la columna "day"
+                    "orderable": true, // Habilita la ordenación para esta columna
+                    "orderDataType": "dom-text", // Utiliza el tipo de ordenación "dom-text" para extraer el valor del input
+                    "type": "text", // Tipo numérico para ordenar números correctamente
+                    "render": function(data, type, full, meta) {
+                        // "data" es el contenido de la celda (input), extrae el valor del input
+                        if (type === "sort") {
+
+                            var inputElement = $(data).find('input');
+                            var inputValue = inputElement.val();                          
+                            return parseInt(inputValue);
+                        }
+                        return data;
+                    }
+                }
+            ],
+            "order": [[8, "desc"]]
         });
 
         $('#recordsPerPage').on('change', function() {
@@ -347,6 +365,5 @@
             var searchTerm = $(this).val();
             dataTable.search(searchTerm).draw();
         });
-        
     </script>
 @endsection
