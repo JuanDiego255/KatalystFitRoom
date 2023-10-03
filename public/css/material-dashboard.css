@@ -3508,6 +3508,10 @@ textarea.form-control.is-valid {
   box-shadow: 0 0 0 2px rgba(253, 92, 112, 0.25);
 }
 
+.dataTables_filter {
+  display: none;
+}
+
 .was-validated textarea.form-control:invalid,
 textarea.form-control.is-invalid {
   padding-right: unset;
@@ -8976,6 +8980,14 @@ fieldset:disabled .btn {
 
 .min-vh-65 {
   min-height: 65vh !important;
+}
+
+.dataTables_filter input {
+  /* Tus estilos personalizados aquí */
+  width: 200px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .min-vh-70 {

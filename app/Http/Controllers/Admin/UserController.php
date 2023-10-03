@@ -22,11 +22,12 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //
-        $Nombre = $request->get('searchfor');
+        $paginate = 10;
+        $name = $request->get('searchfor');
         date_default_timezone_set('America/Chihuahua');
-        $date = date("Y-m-d");
+        $date = date("Y-m-d");        
 
-        $users = User::Where('users.name', 'like', "%$Nombre%")
+        $users = User::Where('users.name', 'like', "%$name%")
             ->select(
                 'users.name as name',
                 'users.id as id',
@@ -34,7 +35,7 @@ class UserController extends Controller
                 'users.change_routine as change_routine',
                 'users.weight as weight',
                 'users.telephone as telephone'
-            )->orderBy('users.name', 'asc')->simplePaginate(7);
+            )->orderBy('users.name', 'asc')->simplePaginate($paginate);
         return view('admin.users.index', compact('users','date'));
     }
 
@@ -84,21 +85,14 @@ class UserController extends Controller
      */
     public function showRoutine($id, Request $request)
     {
-        //
-        $filter_name = $request->get('searchfor');
-        if ($request->get('filter') == '0') {
-            $filter = 'general_categories.category';
-        } else {
-            $filter = 'exercises.exercise';
-        }
         $user = User::find($id);
         $name = $user->name;
+   
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
         $routines = Routine::where('routines.user_id', $id)
-            ->where('routines.status', 1)
-            ->Where($filter, 'like', "%$filter_name%")
+            ->where('routines.status', 1)            
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
             ->select(
@@ -118,7 +112,7 @@ class UserController extends Controller
                 'routines.id as id',
 
             )->orderBy('routines.day', 'desc')
-            ->simplePaginate(7);
+            ->get();
 
 
         return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day'));

@@ -10,33 +10,7 @@
 
 
     </div>
-    <div class="row w-75">
 
-        <div class="col-md-6 mb-3">
-            <form class="form-inline">
-                <div class="input-group input-group-lg input-group-outline my-3 w-100">
-                    <label class="form-label">Filtrar Por Categoría (Presiona Enter)</label>
-                    <input value="" type="text" class="form-control form-control-lg w-50" name="searchfor"
-                        id="searchfor">
-                    <input type="hidden" id="filter" name="filter" value="0">
-
-                </div>
-            </form>
-        </div>
-
-
-        <div class="col-md-6 mb-3">
-            <form class="form-inline">
-                <div class="input-group input-group-lg input-group-outline my-3 w-100">
-                    <label class="form-label">Filtrar Por Ejercicio (Presiona Enter)</label>
-                    <input value="" type="text" class="form-control form-control-lg w-50" name="searchfor"
-                        id="searchfor">
-                    <input type="hidden" id="filter" name="filter" value="1">
-                </div>
-            </form>
-        </div>
-
-    </div>
     <div class="dropdpwn">
         <a class="btn bg-gradient-safewor-red text-white" data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
             Nueva Rutina <i class="material-icons text-white">expand_more</i>
@@ -46,7 +20,7 @@
                 <form method="post" action="{{ url('/create/routine/') }}" style="display:inline">
                     {{ csrf_field() }}
                     <input type="hidden" id="id" name="id" value="{{ $id }}">
-                    <input type="hidden" id="type" name="type" value="0">                    
+                    <input type="hidden" id="type" name="type" value="0">
                     <button class="dropdown-item" type="submit">Crear Rutina De Cero
                     </button>
                 </form>
@@ -62,6 +36,29 @@
         </ul>
     </div>
 
+
+    <div class="row w-75">
+        <div class="col-md-6">
+            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                <label>Filtrar</label>
+                <input value="" placeholder="Escribe para filtrar...." type="text" class="form-control form-control-lg" name="searchfor"
+                    id="searchfor">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group input-group-lg input-group-static my-3 w-100">
+                <label>Mostrar</label>
+                <select id="recordsPerPage" name="recordsPerPage" class="form-control form-control-lg"
+                    autocomplete="recordsPerPage">
+                    <option value="5">5 Registros</option>
+                    <option selected value="10">10 Registros</option>
+                    <option value="25">25 Registros</option>
+                    <option value="50">50 Registros</option>
+                </select>
+
+            </div>
+        </div>
+    </div>
     <h6>Puedes escribir en los campos de texto, luego presionar ENTER para guardar el valor.</h6>
     <center>
         @include('admin.users.quantity-modal')
@@ -71,7 +68,7 @@
 
                 <div class="table-responsive">
                     <input type="hidden" id="user_id" name="user_id" value="{{ $id }}">
-                    <table class="table align-items-center mb-0">
+                    <table id="routines" class="table align-items-center mb-0">
                         <thead>
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -102,8 +99,6 @@
                                     Descripción</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Mantener</th>
-
-                                <th class="text-secondary opacity-7"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -203,7 +198,6 @@
             </div>
 
         </div>
-        {{ $routines ?? ('')->links('pagination::simple-bootstrap-4') }}
 
     </center>
 @endsection
@@ -331,5 +325,28 @@
                 }
             });
         }
+
+        var dataTable = $('#routines').DataTable({
+            searching: true,
+            lengthChange: false,
+            "columnDefs": [
+            {
+                "targets": [2,3,4,5,6,8], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
+                "orderable": false // Deshabilita la ordenación para la columna específica
+            }
+        ]
+        });
+
+        $('#recordsPerPage').on('change', function() {
+            var recordsPerPage = parseInt($(this).val(), 10);
+            dataTable.page.len(recordsPerPage).draw();
+        });
+
+        // Captura el evento input en el campo de búsqueda
+        $('#searchfor').on('input', function() {
+            var searchTerm = $(this).val();
+            dataTable.search(searchTerm).draw();
+        });
+        
     </script>
 @endsection

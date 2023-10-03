@@ -19,10 +19,13 @@
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
-    <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
+   
     {{-- <link href="{{ asset('css/material-dashboard.css.map') }}" rel="stylesheet">
 
     <link href="{{ asset('css/material-dashboard.min.css') }}" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link href="{{ asset('css/material-dashboard.css') }}" rel="stylesheet">
 
 
 </head>
@@ -45,9 +48,12 @@
     <script src="{{ asset('js/smooth-scrollbar.min.js') }}" defer></script>
     <script src="{{ asset('js/chartjs.min.js') }}" defer></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
+   
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ asset('frontend/js/jquery-3.6.0.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="{{ asset('js/material-dashboard.min.js') }}" defer></script>
 
     @if (session('status'))
         <script>
