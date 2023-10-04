@@ -385,10 +385,21 @@
                     var modalContent = '<h2>Ejercicios por Día</h2>';
 
                     $.each(data, function(index, ejercicio) {
-                        var categories = ejercicio.categories.join(
-                        ', '); // Convierte el arreglo en una cadena separada por comas
-                        modalContent += '<h6>Día ' + ejercicio.day + ': ' + ejercicio.quantity +
-                            ' ejercicios, categoría: (' + categories + ')</h6>';
+                        var modalContentDay = '<h6>Día ' + ejercicio.day + ': ejercicios: '+ejercicio.quantity +' (';
+
+                        // Itera sobre las categorías de ese día
+                        $.each(ejercicio.categories, function(category, quantity) {
+                            modalContentDay += category + ': ' + quantity +
+                                ', ';
+                        });
+
+                        // Elimina la última coma y espacio en blanco
+                        modalContentDay = modalContentDay.slice(0, -2);
+
+                        // Completa la línea
+                        modalContentDay += ')</h6>';
+
+                        modalContent += modalContentDay;
                     });
 
                     // Mostrar el modal y establecer su contenido

@@ -402,29 +402,32 @@ class UserController extends Controller
 
         // Procesa los resultados para eliminar las repeticiones en la primera línea
         $processedResults = [];
+
         foreach ($results as $result) {
             $day = $result->day;
             $category = $result->category;
             $quantity = $result->quantity;
 
-            // Verifica si el día ya está en el array de resultados procesados
             if (isset($processedResults[$day])) {
-                // Agrega la categoría solo si no está en la lista de categorías para ese día
-                if (!in_array($category, $processedResults[$day]['categories'])) {
-                    $processedResults[$day]['categories'][] = $category;
+                // Verifica si la categoría ya existe para ese día
+                if (isset($processedResults[$day]['categories'][$category])) {
+                    $processedResults[$day]['categories'][$category] += $quantity;
+                } else {
+                    // Si no existe, agrega la categoría
+                    $processedResults[$day]['categories'][$category] = $quantity;
                 }
+
                 // Suma la cantidad de ejercicios para ese día
                 $processedResults[$day]['quantity'] += $quantity;
             } else {
                 // Si es un nuevo día, crea una nueva entrada en el array de resultados procesados
                 $processedResults[$day] = [
                     'day' => $day,
-                    'categories' => [$category],
+                    'categories' => [$category => $quantity],
                     'quantity' => $quantity,
                 ];
             }
         }
-
 
         return response()->json($processedResults);
     }
