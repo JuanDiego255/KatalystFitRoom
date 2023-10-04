@@ -62,7 +62,7 @@
             </div>
         </div>
     </div>
-    <h6>Puedes escribir en los campos de texto, luego presionar ENTER para guardar el valor.</h6>
+    <h6>Para realizar los cambios en la columna (Forma) debes presionar ENTER</h6>
     <center>
         @include('admin.users.quantity-modal')
         @include('admin.users.modal-process')
@@ -119,32 +119,28 @@
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')"
-                                                onclick="update(event,this.id,this.value,{{ $routine->id }},'0')"
-                                                type="number" name="alt" id="alt" min="0"
-                                                value="{{ $routine->alt }}" class="form-control w-25">
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                                name="alt" id="alt" min="0" value="{{ $routine->alt }}"
+                                                class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')"
-                                                onclick="update(event,this.id,this.value,{{ $routine->id }},'0')"
-                                                type="number" name="series" id="series" min="0"
-                                                value="{{ $routine->series }}" class="form-control w-25">
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                                name="series" id="series" min="0" value="{{ $routine->series }}"
+                                                class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')"
-                                                onclick="update(event,this.id,this.value,{{ $routine->id }},'0')"
-                                                type="number" name="reps" id="reps" min="0"
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                                name="reps" id="reps" min="0"
                                                 value="{{ $routine->reps }}" class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onkeypress="update(event,this.id,this.value,{{ $routine->id }},'1')"
-                                                onclick="update(event,this.id,this.value,{{ $routine->id }},'0')"
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})"
                                                 type="number" min="0" name="weight" id="weight"
                                                 value="{{ $routine->weight }}" class="form-control w-25">
                                         </div>
@@ -167,7 +163,7 @@
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input onclick="update(event,this.id,this.value,{{ $routine->id }})"
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})"
                                                 type="number" name="day" id="day" min="0"
                                                 max="{{ $max_day }}" value="{{ $routine->day }}"
                                                 class="form-control w-25">
@@ -189,9 +185,6 @@
 
                                         </p>
                                     </td>
-
-
-
                                 </tr>
                                 @include('admin.users.form')
                             @endforeach
@@ -207,14 +200,12 @@
 @endsection
 @section('script')
     <script>
-        function update(e, name, val, id, tipo) {
+        function update(name, val, id) {
             var execute = 1;
-            if (tipo == '1') {
-                if (e.keyCode !== 13 && !e.shiftKey) {
-                    execute = 0;
-                }
+            if (isNaN(parseInt(val))) {                
+                execute = 0;
             }
-
+            
             if (execute == 1) {
                 $.ajaxSetup({
                     headers: {
@@ -385,7 +376,8 @@
                     var modalContent = '<h2>Ejercicios por Día</h2>';
 
                     $.each(data, function(index, ejercicio) {
-                        var modalContentDay = '<h6>Día ' + ejercicio.day + ': ejercicios: '+ejercicio.quantity +' (';
+                        var modalContentDay = '<h6>Día ' + ejercicio.day + ': ejercicios: ' +
+                            ejercicio.quantity + ' (';
 
                         // Itera sobre las categorías de ese día
                         $.each(ejercicio.categories, function(category, quantity) {
