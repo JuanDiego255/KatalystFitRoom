@@ -32,6 +32,9 @@
             <li>
                 <a href="{{ url('user/asign/' . $id) }}" class="dropdown-item">Asignar Rutina</a>
             </li>
+            <li>
+                <button type="button" class="dropdown-item" id="btnProceso">Ver Proceso</button>
+            </li>
 
         </ul>
     </div>
@@ -62,6 +65,7 @@
     <h6>Puedes escribir en los campos de texto, luego presionar ENTER para guardar el valor.</h6>
     <center>
         @include('admin.users.quantity-modal')
+        @include('admin.users.modal-process')
 
         <div class="card w-100 mb-4">
             <div class="product_data">
@@ -345,14 +349,16 @@
                         if (type === "sort") {
 
                             var inputElement = $(data).find('input');
-                            var inputValue = inputElement.val();                          
+                            var inputValue = inputElement.val();
                             return parseInt(inputValue);
                         }
                         return data;
                     }
                 }
             ],
-            "order": [[8, "desc"]]
+            "order": [
+                [8, "desc"]
+            ]
         });
 
         $('#recordsPerPage').on('change', function() {
@@ -364,6 +370,35 @@
         $('#searchfor').on('input', function() {
             var searchTerm = $(this).val();
             dataTable.search(searchTerm).draw();
+        });
+
+        $('#btnProceso').click(function() {
+            // Realizar una llamada AJAX para obtener los resultados
+            var userId = document.getElementById('user_id').value;
+            $.ajax({
+                url: '/view-process/' + userId,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+
+                    // Construir el contenido del modal con los resultados
+                    var modalContent = '<h2>Ejercicios por Día</h2>';
+
+                    $.each(data, function(index, ejercicio) {
+                        var categories = ejercicio.categories.join(
+                        ', '); // Convierte el arreglo en una cadena separada por comas
+                        modalContent += '<h6>Día ' + ejercicio.day + ': ' + ejercicio.quantity +
+                            ' ejercicios, categoría: (' + categories + ')</h6>';
+                    });
+
+                    // Mostrar el modal y establecer su contenido
+                    $('#process .modal-content .modal-body').html(modalContent);
+                    $('#process').modal('show');
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
         });
     </script>
 @endsection

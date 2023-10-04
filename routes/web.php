@@ -75,6 +75,7 @@ Route::group(['auth'], function () {
         Route::put('/update-description/routine/{id}', [RoutineController::class, 'updateDescription']);
         Route::get('/user/routine/{id}', [UserController::class, 'showRoutine']);
         Route::get('/user/asign/{id}', [UserController::class, 'showUserWithoutRoutine']);
+        Route::get('/view-process/{id}', [UserController::class, 'showProcess']);
         Route::get('/user/routine-day/{id}', [UserController::class, 'showRoutineDays']);
         Route::get('/register-user', [UserController::class, 'newUser']);
         Route::post('/register-create', [UserController::class, 'store']);

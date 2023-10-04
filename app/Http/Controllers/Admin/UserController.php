@@ -25,7 +25,7 @@ class UserController extends Controller
         $paginate = 10;
         $name = $request->get('searchfor');
         date_default_timezone_set('America/Chihuahua');
-        $date = date("Y-m-d");        
+        $date = date("Y-m-d");
 
         $users = User::Where('users.name', 'like', "%$name%")
             ->select(
@@ -36,7 +36,7 @@ class UserController extends Controller
                 'users.weight as weight',
                 'users.telephone as telephone'
             )->orderBy('users.name', 'asc')->simplePaginate($paginate);
-        return view('admin.users.index', compact('users','date'));
+        return view('admin.users.index', compact('users', 'date'));
     }
 
     /**
@@ -87,12 +87,12 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $name = $user->name;
-   
+
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
         $routines = Routine::where('routines.user_id', $id)
-            ->where('routines.status', 1)            
+            ->where('routines.status', 1)
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->join('exercises', 'routines.exercise_id', 'exercises.id')
             ->select(
@@ -387,5 +387,45 @@ class UserController extends Controller
             return redirect()->back()->with(['status' => 'No hay usuarios sin rutina', 'icon' => 'warning']);
         }
         return view('admin.users.asign-user', compact('users', 'id'));
+    }
+
+    public function showProcess($id)
+    {
+        $results = DB::table('routines')
+            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
+            ->where('routines.user_id', $id)
+            ->where('routines.day', '!=', 0)
+            ->select('routines.day', 'general_categories.category')
+            ->selectRaw('COUNT(routines.exercise_id) as quantity')
+            ->groupBy('routines.day', 'general_categories.category')
+            ->get();
+
+        // Procesa los resultados para eliminar las repeticiones en la primera línea
+        $processedResults = [];
+        foreach ($results as $result) {
+            $day = $result->day;
+            $category = $result->category;
+            $quantity = $result->quantity;
+
+            // Verifica si el día ya está en el array de resultados procesados
+            if (isset($processedResults[$day])) {
+                // Agrega la categoría solo si no está en la lista de categorías para ese día
+                if (!in_array($category, $processedResults[$day]['categories'])) {
+                    $processedResults[$day]['categories'][] = $category;
+                }
+                // Suma la cantidad de ejercicios para ese día
+                $processedResults[$day]['quantity'] += $quantity;
+            } else {
+                // Si es un nuevo día, crea una nueva entrada en el array de resultados procesados
+                $processedResults[$day] = [
+                    'day' => $day,
+                    'categories' => [$category],
+                    'quantity' => $quantity,
+                ];
+            }
+        }
+
+
+        return response()->json($processedResults);
     }
 }
