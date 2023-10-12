@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\GeneralCategory;
 use App\Models\Routine;
 use App\Models\RoutineDays;
 use App\Models\User;
@@ -87,7 +88,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $name = $user->name;
-
+        $general_categories = GeneralCategory::get();
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
@@ -112,10 +113,17 @@ class UserController extends Controller
                 'routines.id as id',
 
             )->orderBy('routines.day', 'desc')
-            ->get();
+            ->get();            
+            $exer_active = 0;
+            foreach($routines as $routine){               
+                
+                if($routine->day == 1){
+                    $exer_active++;
+                }
+            }
 
 
-        return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day'));
+        return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day','general_categories','exer_active'));
     }
 
     /**

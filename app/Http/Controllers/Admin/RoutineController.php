@@ -103,33 +103,108 @@ class RoutineController extends Controller
                     $error_save++;
                 }
             } else {
+
+                $generalCategories = $request->except(['_token', 'id', 'type']);
+                $quantity = 0;
+                foreach ($generalCategories as $categoryId => $categoryValue) {
+                    $quantity += $categoryValue;
+                    $exe = true;
+                    if ($categoryValue == 0) {
+                        $exe = false;
+                    }
+                    $categories[] = [
+                        "id" => $categoryId,
+                        "value" => $categoryValue,
+                        "exec" => $exe
+                    ];
+                    
+                }
+
                 $exercise_active = 0;
                 $previousRoutine = Routine::where('user_id', $request->id)
                     ->where('routine_number', $last_number)
                     ->get();
 
+                $all_exercises = Exercises::get();
+
+                foreach ($categories as $index => $category) {
+                    $max_id = Routine::where('user_id', $request->id)
+                        ->where('routine_number', $last_number)
+                        ->where('general_category_id', $category["id"])
+                        ->where('day', '!=', 0)
+                        ->count();
+
+                    $max_ex = 0;
+
+                    foreach ($all_exercises as $exer) {
+                        if ($exer->general_category_id == $category["id"]) {
+                            $max_ex++;
+                        }
+                    }
+
+                    if ($max_id == $max_ex) {
+                        $categories[$index]['exec'] = false;
+                    }
+                }
+                $empty = 0;
+                foreach ($categories as $category) {
+                    if ($category["exec"] == false) {
+                        $empty++;
+                    }
+                }
+
+                if (count($categories) == $empty) {
+                    DB::rollback();
+                    return redirect()->back()->with(['status' => 'Ya existen todos los ejercicios generados con respecto a los valores del formulario.', 'icon' => 'warning']);
+                }
+
                 foreach ($previousRoutine as $routine) {
-                    if ($routine->day != 0 && $request->quantity != $count_exer_active && $routine->keep_exercise != 1) {
-                        $new_routine[] = [
-                            "user_id" => $request->id,
-                            "general_category_id" => $routine->general_category_id,
-                            "exercise_id" => $routine->exercise_id,
-                            "alt" => $routine->alt,
-                            "series" => $routine->series,
-                            "reps" => $routine->reps,
-                            "day" => $routine->day,
-                            "keep_exercise" => $routine->keep_exercise,
-                            "status" => 1,
-                            "routine_number" => $last_number_opc,
-                        ];
-                        $count_exer_active++;
+                    
+                    if ($routine->day != 0 && $quantity != $count_exer_active && $routine->keep_exercise != 1) {                       
+                        $exec = false;
+                        //Valida si se puede modificar la categoría
+                        foreach ($categories as $category) {
+                            
+                            if ($category["id"] == $routine->general_category_id) {
+                                
+                                //Valida hay cantidad para poder guardar
+                                if ($category["value"] != 0 && $category["exec"] != false) {
+                                    $exec = true;
+                                }
+                                break;
+                            }
+                        }
+                        if ($exec) {
+                            $new_routine[] = [
+                                "user_id" => $request->id,
+                                "general_category_id" => $routine->general_category_id,
+                                "exercise_id" => $routine->exercise_id,
+                                "alt" => $routine->alt,
+                                "series" => $routine->series,
+                                "reps" => $routine->reps,
+                                "day" => $routine->day,
+                                "keep_exercise" => $routine->keep_exercise,
+                                "status" => 1,
+                                "routine_number" => $last_number_opc,
+                            ];
+                           
+                            foreach ($categories as $key => $category) {
+                                if ($category['id'] === $routine->general_category_id) {
+                                    $categories[$key]['value'] = $category['value'] - 1;
+                                    break;
+                                }
+                            }
+                            $count_exer_active++;
+                        }
+                        
                     }
                     if ($routine->day != 0) {
                         $exercise_active++;
                     }
                 }
+               
 
-                if ($request->quantity > $exercise_active) {
+                if ($quantity > $exercise_active) {
                     $message_error_quantity = true;
                 }
 
@@ -210,7 +285,7 @@ class RoutineController extends Controller
                 }
             }
 
-            if($error_save == 0){
+            if ($error_save == 0) {
                 DB::rollback();
                 return redirect()->back()->with(['status' => 'Hubo un error generando la rutina, se reversaron los cambios.', 'icon' => 'error']);
             }

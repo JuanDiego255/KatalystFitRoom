@@ -4,6 +4,7 @@
 
         <h2 class="text-center font-title"><strong>Rutina de {{ $name }}</strong>
         </h2>
+        <h4 class="text-center">{{$exer_active}} ejercicios activos</h4>
 
         <hr class="hr-servicios">
 
@@ -202,10 +203,10 @@
     <script>
         function update(name, val, id) {
             var execute = 1;
-            if (isNaN(parseInt(val))) {                
+            if (isNaN(parseInt(val))) {
                 execute = 0;
             }
-            
+
             if (execute == 1) {
                 $.ajaxSetup({
                     headers: {
@@ -349,7 +350,31 @@
             ],
             "order": [
                 [8, "desc"]
-            ]
+            ],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "<<",
+                    "sLast": "Último",
+                    "sNext": ">>",
+                    "sPrevious": "<<"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
         });
 
         $('#recordsPerPage').on('change', function() {
