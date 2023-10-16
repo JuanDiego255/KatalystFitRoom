@@ -18,12 +18,8 @@ class ExercisesController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $Nombre = $request->get('searchfor');
-
         $categories = GeneralCategory::get();
-        $exercises = Exercises::Where('general_categories.category', 'like', "%$Nombre%")
-            ->join('general_categories', 'exercises.general_category_id', 'general_categories.id')
+        $exercises = Exercises::join('general_categories', 'exercises.general_category_id', 'general_categories.id')
             ->select(
                 'exercises.id as id',
                 'exercises.exercise as exercise',
@@ -31,7 +27,7 @@ class ExercisesController extends Controller
                 'general_categories.id as gen_category_id',
                 'general_categories.category as gen_category'
             )
-            ->simplePaginate(5);
+            ->get();
         return view('admin.exercises.index', compact('categories', 'exercises'));
     }
 
@@ -64,7 +60,7 @@ class ExercisesController extends Controller
 
             return redirect('/exercises')->with(['status' => 'Se ha guardado el ejercicio con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            //throw $th;
+            return redirect('/exercises')->with(['status' => 'No se pudo guardar el ejercicio', 'icon' => 'error']);
         }
     }
 
@@ -100,7 +96,7 @@ class ExercisesController extends Controller
 
             return redirect('/exercises')->with(['status' => 'Se ha editado el ejercicio con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            //throw $th;
+            return redirect('/exercises')->with(['status' => 'No se pudo guardar el ejercicio', 'icon' => 'error']);
         }
     }
 

@@ -24,8 +24,8 @@
                             <tr>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Día</th>
-                              
-                                
+
+
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Estado</th>
 
@@ -34,14 +34,15 @@
                         </thead>
                         <tbody>
                             @foreach ($routine_days as $day)
-                                <input type="hidden" class="routine_day_id" name="routine_day_id" value="{{ $day->id }}">
+                                <input type="hidden" class="routine_day_id" name="routine_day_id"
+                                    value="{{ $day->id }}">
                                 <tr>
 
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $day->day }}</p>
                                     </td>
-                                    
-                                    
+
+
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">
 
@@ -60,14 +61,17 @@
 
                 </div>
             </div>
-
+           
         </div>
-      
+        <a href="{{ url('users') }}" class="btn bg-gradient-safewor-red text-white w-25">
+            {{ __('Volver') }}
+        </a>
+
+
     </center>
 @endsection
 @section('script')
     <script>
-               
         function updateStatus(val, id) {
             var status = 0;
             if (val) {

@@ -123,6 +123,7 @@ class RoutineController extends Controller
                 $exercise_active = 0;
                 $previousRoutine = Routine::where('user_id', $request->id)
                     ->where('routine_number', $last_number)
+                    ->inRandomOrder()
                     ->get();
 
                 $all_exercises = Exercises::get();
@@ -556,7 +557,7 @@ class RoutineController extends Controller
                 )->orderBy('routines.day', 'asc')->orderBy('routines.alt', 'asc')->get();
 
             if (count($routines) == 0) {
-                return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
+                return redirect()->back()->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
             }
 
             $documento = new \PhpOffice\PhpWord\PhpWord();

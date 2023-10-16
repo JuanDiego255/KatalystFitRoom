@@ -72,7 +72,7 @@
                                         
                                     </div>
                                     <h5 class="font-weight-normal mt-3">
-                                        <a href="{{url('detail-clothing/' . $discipline->id)}}">{{ $discipline->discipline }}</a>
+                                        {{ $discipline->discipline }}
                                     </h5>
                                     <p class="mb-0">
                                         {{ $discipline->description }}

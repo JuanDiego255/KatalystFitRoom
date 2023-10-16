@@ -50,7 +50,7 @@ class DisciplineController extends Controller
 
             return redirect('/disciplines')->with(['status' => 'Se ha guardado la disciplina con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            //throw $th;
+            return redirect('/disciplines')->with(['status' => 'No se pudo guardar la disciplina', 'icon' => 'error']);
         }
     }
 

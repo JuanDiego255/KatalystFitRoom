@@ -117,7 +117,7 @@ class UserController extends Controller
             $exer_active = 0;
             foreach($routines as $routine){               
                 
-                if($routine->day == 1){
+                if($routine->day != 0){
                     $exer_active++;
                 }
             }
@@ -403,6 +403,7 @@ class UserController extends Controller
             ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
             ->where('routines.user_id', $id)
             ->where('routines.day', '!=', 0)
+            ->where('routines.status', 1)
             ->select('routines.day', 'general_categories.category')
             ->selectRaw('COUNT(routines.exercise_id) as quantity')
             ->groupBy('routines.day', 'general_categories.category')

@@ -36,7 +36,7 @@
                                         <label class="form-label">Cédula</label>
                                         <input id="identification" type="text"
                                             class="form-control form-control-lg @error('identification') is-invalid @enderror"
-                                            name="identification" value="{{ old('identification') }}" required
+                                            name="identification" minlength="9" maxlength="9" value="{{ old('identification') }}" required
                                             autocomplete="identification" autofocus>
 
                                         @error('identification')
@@ -52,13 +52,13 @@
                                         class="input-group input-group-lg input-group-outline @error('telephone') is-filled @enderror my-3">
                                         <label class="form-label">Teléfono</label>
                                         <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                                            maxlength="11" id="telephone" type="telephone"
+                                            maxlength="11" minlength="8" id="telephone" type="telephone"
                                             class="form-control form-control-lg @error('telephone')
 is-invalid
 @enderror"
                                             name="telephone" value="{{ old('telephone') }}" required
                                             autocomplete="telephone" autofocus>
-                                        <span class="input-group-text pr-3" id="basic-addon2">506XXXXXXXX</span>
+                                       
 
                                         @error('telephone')
                                             <span class="invalid-feedback" role="alert">
@@ -73,13 +73,12 @@ is-invalid
                                         class="input-group input-group-lg input-group-outline @error('whatsapp') is-filled @enderror my-3">
                                         <label class="form-label">WhatsApp</label>
                                         <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                                            maxlength="11" id="whatsapp" type="whatsapp"
+                                            maxlength="11" minlength="8" id="whatsapp" type="whatsapp"
                                             class="form-control form-control-lg @error('whatsapp')
 is-invalid
 @enderror"
                                             name="whatsapp" value="{{ old('whatsapp') }}" autocomplete="whatsapp"
                                             autofocus>
-                                        <span class="input-group-text" id="basic-addon2">506XXXXXXXX</span>
 
                                         @error('whatsapp')
                                             <span class="invalid-feedback" role="alert">
@@ -106,7 +105,7 @@ is-invalid
                                 <div class="col-md-6">
                                     <div
                                         class="input-group input-group-lg input-group-outline my-3 @error('email') is-filled @enderror">
-                                        <label class="form-label">Correo</label>
+                                        <label class="form-label">Correo Electrónico</label>
                                         <input id="email" type="email"
                                             class="form-control form-control-lg @error('email') is-invalid @enderror"
                                             name="email" value="{{ old('email') }}" autocomplete="email">
@@ -399,13 +398,12 @@ is-invalid
                                         class="input-group input-group-lg input-group-outline @error('contact_emergency') is-filled @enderror my-3">
                                         <label class="form-label">Contacto De Emergencia</label>
                                         <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                                            maxlength="11" id="contact_emergency" type="contact_emergency"
+                                            maxlength="11" minlength="8" id="contact_emergency" type="contact_emergency"
                                             class="form-control form-control-lg @error('contact_emergency')
 is-invalid
 @enderror"
                                             name="contact_emergency" value="{{ old('contact_emergency') }}"
                                             autocomplete="contact_emergency" autofocus>
-                                        <span class="input-group-text" id="basic-addon2">506XXXXXXXX</span>
 
                                         @error('contact_emergency')
                                             <span class="invalid-feedback" role="alert">

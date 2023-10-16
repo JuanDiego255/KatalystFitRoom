@@ -17,7 +17,7 @@ class GeneralCategoryController extends Controller
     public function index()
     {
         //
-        $categories = GeneralCategory::simplePaginate(3);
+        $categories = GeneralCategory::get();
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -32,6 +32,14 @@ class GeneralCategoryController extends Controller
 
         //
         try {
+
+            $verify_category = GeneralCategory::Where('category', 'like', "%$request->category%")
+            ->get();
+
+            if(!$verify_category->isEmpty()){
+                return redirect('/categories')->with(['status' => 'Ya existe la categoría con un nombre similar o igual', 'icon' => 'warning']);
+            }
+
             $campos = [
                 'category' => 'required|string|max:100'
             ];
@@ -49,7 +57,7 @@ class GeneralCategoryController extends Controller
 
             return redirect('/categories')->with(['status' => 'Se ha guardado la categoría con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            //throw $th;
+            return redirect('/categories')->with(['status' => 'No se pudo guardar la categoría', 'icon' => 'error']);
         }
     }
 
@@ -78,11 +86,11 @@ class GeneralCategoryController extends Controller
                 $image = $request->file('image')->store('uploads', 'public');
                 $category->image = $image;
             }
-            $category->category = $category->category;
+            $category->category = $request->category;
             $category->update();
             return redirect('/categories')->with(['status' => 'Se ha editado la categoría con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {
-            //throw $th;
+            return redirect('/categories')->with(['status' => 'No se pudo guardar la categoría', 'icon' => 'error']);
         }
     }
 
