@@ -117,7 +117,6 @@ class RoutineController extends Controller
                         "value" => $categoryValue,
                         "exec" => $exe
                     ];
-                    
                 }
 
                 $exercise_active = 0;
@@ -160,14 +159,14 @@ class RoutineController extends Controller
                 }
 
                 foreach ($previousRoutine as $routine) {
-                    
-                    if ($routine->day != 0 && $quantity != $count_exer_active && $routine->keep_exercise != 1) {                       
+
+                    if ($routine->day != 0 && $quantity != $count_exer_active && $routine->keep_exercise != 1) {
                         $exec = false;
                         //Valida si se puede modificar la categoría
                         foreach ($categories as $category) {
-                            
+
                             if ($category["id"] == $routine->general_category_id) {
-                                
+
                                 //Valida hay cantidad para poder guardar
                                 if ($category["value"] != 0 && $category["exec"] != false) {
                                     $exec = true;
@@ -188,7 +187,7 @@ class RoutineController extends Controller
                                 "status" => 1,
                                 "routine_number" => $last_number_opc,
                             ];
-                           
+
                             foreach ($categories as $key => $category) {
                                 if ($category['id'] === $routine->general_category_id) {
                                     $categories[$key]['value'] = $category['value'] - 1;
@@ -197,13 +196,17 @@ class RoutineController extends Controller
                             }
                             $count_exer_active++;
                         }
-                        
                     }
                     if ($routine->day != 0) {
                         $exercise_active++;
                     }
                 }
-               
+
+                if ($count_exer_active == 0) {
+                    DB::rollback();
+                    return redirect()->back()->with(['status' => 'No hay ejercicios a generar con respecto a los valores digitados.', 'icon' => 'warning']);
+                }
+
 
                 if ($quantity > $exercise_active) {
                     $message_error_quantity = true;
