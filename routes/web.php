@@ -11,6 +11,7 @@ use App\Http\Controllers\AsistController;
 use App\Http\Controllers\Admin\DetailsCategoryController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\DetailsController;
+use App\Http\Controllers\RoutineParameterController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -108,5 +109,10 @@ Route::group(['auth'], function () {
         Route::post('/products/store', [DetailsController::class, 'store']);
         Route::put('products/update/{id}', [DetailsController::class, 'update']);
         Route::delete('products/delete/{id}', [DetailsController::class, 'destroy']);
+
+        //Rutas para parámetros
+        Route::get('/parameters', [RoutineParameterController::class, 'index']);
+        Route::post('/parameter/store', [RoutineParameterController::class, 'store']);       
+        Route::delete('parameter/delete/{id}', [RoutineParameterController::class, 'destroy']);
     });
 });

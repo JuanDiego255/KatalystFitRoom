@@ -132,6 +132,15 @@
                   
                 </div>
             </li>
+            <li class="nav-item">
+                <a @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
+                    href="{{ url('/parameters') }}">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">settings</i>
+                    </div>
+                    <span class="nav-link-text text-white ms-1">Parámetros</span>
+                </a>
+            </li>
 
             <li class="nav-item">
                 <div class="dropdown">

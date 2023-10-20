@@ -7,6 +7,7 @@ use App\Models\DetailsCategory;
 use App\Models\Exercises;
 use App\Models\Routine;
 use App\Models\RoutineDays;
+use App\Models\RoutineParameter;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class RoutineController extends Controller
         DB::beginTransaction();
         try {
 
-            $exercises = Exercises::all();
+            $exercises = Exercises::inRandomOrder()->get();
 
             if (count($exercises) == 0) {
                 return redirect('/users')->with(['status' => 'No existen ejercicios para crear rutinas', 'icon' => 'warning']);
@@ -89,18 +90,50 @@ class RoutineController extends Controller
             $message_error_quantity = false;
 
             if ($request->type == 0) {
+
+                $parameters = RoutineParameter::get();
+
+                foreach ($parameters as $parameter) {
+
+                    $array_parameters[] = [
+                        "general_category_id" => $parameter->general_category_id,
+                        "quantity" => $parameter->quantity,
+                        "day" => $parameter->day
+                    ];
+                }
+
                 foreach ($exercises as $exercise) {
+                    $gen_cat_id = $exercise->general_category_id;
+                    $day = 0;
+                    $series = 0;
+                    $reps = 0;
+                    foreach ($array_parameters as $parameter) {
+                        if ($exercise->general_category_id == $parameter["general_category_id"] && $parameter["quantity"] != 0) {
+                            $gen_cat_id = $exercise->general_category_id;
+                            $day = $parameter["day"];
+                            $series = 3;
+                            $reps = 10;
+                            break;
+                        }
+                    }
                     $routine = new Routine();
                     $routine->user_id = $request->id;
-                    $routine->general_category_id = $exercise->general_category_id;
+                    $routine->general_category_id = $gen_cat_id;
                     $routine->exercise_id = $exercise->id;
                     $routine->alt = 0;
-                    $routine->series = 0;
-                    $routine->reps = 0;
+                    $routine->series = $series;
+                    $routine->reps = $reps;
                     $routine->status = 1;
+                    $routine->day = $day;
                     $routine->routine_number = $last_number_opc;
                     $routine->save();
                     $error_save++;
+                    foreach ($array_parameters as $index => $parameter) {
+                        if ($gen_cat_id == $parameter["general_category_id"] && $parameter["quantity"] != 0) {
+                            $array_parameters[$index]['quantity'] = $parameter["quantity"] - 1;
+                            break;
+                        }
+                    }
                 }
             } else {
 
