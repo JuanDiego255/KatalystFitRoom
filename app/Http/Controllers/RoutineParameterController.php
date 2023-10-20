@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class RoutineParameterController extends Controller
 {
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -20,13 +20,13 @@ class RoutineParameterController extends Controller
             ->select(
                 'routine_parameters.id as id',
                 'routine_parameters.quantity as quantity',
-                'routine_parameters.day as day',              
+                'routine_parameters.day as day',
                 'general_categories.id as gen_category_id',
                 'general_categories.category as gen_category'
             )
             ->get();
         $categories = GeneralCategory::get();
-        return view('admin.parameters.index', compact('categories','parameters'));
+        return view('admin.parameters.index', compact('categories', 'parameters'));
     }
 
 
@@ -40,11 +40,23 @@ class RoutineParameterController extends Controller
     {
         //
         try {
-
-            $exercise = Exercises::where('general_category_id',$request->general_category_id)->count();
-
-            if($request->quantity > $exercise){
-                return redirect('/parameters')->with(['status' => 'La cantidad digitada supera los ejercicios creados con esa categoría', 'icon' => 'warning']);
+            $msg_error = null;
+            $quant_parameter = 0;
+            $routine_parameter = RoutineParameter::where('general_category_id', $request->general_category_id)
+            ->get();
+            if(!$routine_parameter->isEmpty()){
+                foreach($routine_parameter as $param){
+                    $quant_parameter = $quant_parameter + $param->quantity;
+                }
+            }
+            $exercise = Exercises::where('general_category_id', $request->general_category_id)->count();
+            $total_quantity = $request->quantity + $quant_parameter;
+            if ($total_quantity > $exercise) {
+                $msg_error = "La cantidad digitada supera los ejercicios creados con esa categoría";
+                if($quant_parameter > 0){
+                    $msg_error = "La cantidad digitada más la cantidad ya creada con la categoría seleccionada es mayor a los ejercicios creados";
+                }
+                return redirect('/parameters')->with(['status' => $msg_error, 'icon' => 'warning']);
             }
 
             $campos = [
@@ -78,8 +90,8 @@ class RoutineParameterController extends Controller
     public function destroy($id)
     {
         //
-        try {               
-           
+        try {
+
             RoutineParameter::destroy($id);
             return redirect()->back()->with(['status' => 'Se ha borrado el parámetro con éxito', 'icon' => 'success']);
         } catch (\Exception $th) {

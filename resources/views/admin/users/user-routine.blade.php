@@ -4,7 +4,7 @@
 
         <h2 class="text-center font-title"><strong>Rutina de {{ $name }}</strong>
         </h2>
-        <h4 class="text-center">{{$exer_active}} ejercicios activos</h4>
+        <h4 class="text-center">{{ $exer_active }} ejercicios activos</h4>
 
         <hr class="hr-servicios">
 
@@ -81,6 +81,8 @@
 
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Ejercicio</th>
+                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
+                                    Día</th>
                                 <th
                                     class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7 w-5">
                                     Alt</th>
@@ -98,8 +100,7 @@
                                     Forma</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Estado</th>
-                                <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
-                                    Día</th>
+
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                     Descripción</th>
                                 <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
@@ -121,21 +122,28 @@
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
                                             <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
+                                                name="day" id="day" min="0" max="{{ $max_day }}"
+                                                value="{{ $routine->day }}" class="form-control w-25">
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-xxs text-center">
+                                        <div class="input-group input-group-outline my-3">
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
                                                 name="alt" id="alt" min="0" value="{{ $routine->alt }}"
                                                 class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
-                                                name="series" id="series" min="0" value="{{ $routine->series }}"
-                                                class="form-control w-25">
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})"
+                                                type="number" name="series" id="series" min="0"
+                                                value="{{ $routine->series }}" class="form-control w-25">
                                         </div>
                                     </td>
                                     <td class="align-middle text-xxs text-center">
                                         <div class="input-group input-group-outline my-3">
-                                            <input oninput="update(this.id,this.value,{{ $routine->id }})" type="number"
-                                                name="reps" id="reps" min="0"
+                                            <input oninput="update(this.id,this.value,{{ $routine->id }})"
+                                                type="number" name="reps" id="reps" min="0"
                                                 value="{{ $routine->reps }}" class="form-control w-25">
                                         </div>
                                     </td>
@@ -162,14 +170,7 @@
 
                                         </p>
                                     </td>
-                                    <td class="align-middle text-xxs text-center">
-                                        <div class="input-group input-group-outline my-3">
-                                            <input oninput="update(this.id,this.value,{{ $routine->id }})"
-                                                type="number" name="day" id="day" min="0"
-                                                max="{{ $max_day }}" value="{{ $routine->day }}"
-                                                class="form-control w-25">
-                                        </div>
-                                    </td>
+
                                     <td class="align-middle text-xxs text-center">
                                         <button type="button" data-bs-toggle="modal"
                                             data-bs-target="#edit-description-modal{{ $routine->id }}"
@@ -326,30 +327,32 @@
             searching: true,
             lengthChange: false,
             "columnDefs": [{
-                    "targets": [2, 3, 4, 5,
+                    "targets": [3, 4, 5,
                         6
                     ], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
                     "orderable": false // Deshabilita la ordenación para la columna específica
                 },
                 {
-                    "targets": [8], // Índice de la columna "day"
+                    "targets": [2], // Índice de la columna "day"
                     "orderable": true, // Habilita la ordenación para esta columna
                     "orderDataType": "dom-text", // Utiliza el tipo de ordenación "dom-text" para extraer el valor del input
-                    "type": "text", // Tipo numérico para ordenar números correctamente
+                    "type": "numeric", // Tipo numérico para ordenar números correctamente
                     "render": function(data, type, full, meta) {
                         // "data" es el contenido de la celda (input), extrae el valor del input
                         if (type === "sort") {
 
                             var inputElement = $(data).find('input');
                             var inputValue = inputElement.val();
-                            return parseInt(inputValue);
+                            if(inputValue != 0){
+                                return parseInt(inputValue);
+                            }                            
                         }
                         return data;
                     }
                 }
             ],
             "order": [
-                [8, "desc"]
+                [2, "asc"]
             ],
             "language": {
                 "sProcessing": "Procesando...",
