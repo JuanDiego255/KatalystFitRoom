@@ -11,6 +11,7 @@ use App\Http\Controllers\AsistController;
 use App\Http\Controllers\Admin\DetailsCategoryController;
 use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\DetailsController;
+use App\Http\Controllers\DatabaseAdminController;
 use App\Http\Controllers\RoutineParameterController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -114,5 +115,13 @@ Route::group(['auth'], function () {
         Route::get('/parameters', [RoutineParameterController::class, 'index']);
         Route::post('/parameter/store', [RoutineParameterController::class, 'store']);       
         Route::delete('parameter/delete/{id}', [RoutineParameterController::class, 'destroy']);
+    });
+
+    Route::group(['middleware' => 'dbAdmin'], function () {      
+
+        //Rutas para DB Admin
+        Route::get('/tables', [DatabaseAdminController::class, 'index']);
+        Route::post('/tables/store', [DatabaseAdminController::class, 'store']);       
+      
     });
 });
