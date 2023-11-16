@@ -11,7 +11,7 @@
             class="btn bg-gradient-safewor-black text-white">Agregar Parámetro</button>
 
         <center>
-           
+
             @include('admin.parameters.add')
             <div class="row w-100">
                 <div class="col-md-6">
@@ -65,11 +65,14 @@
                                     <td class="align-middle text-xxs text-center">
                                         <p class=" font-weight-bold mb-0">{{ $parameter->day }}</p>
                                     </td>
-                                    
+
 
                                     <td class="align-middle">
-                                        <center>                                          
-
+                                        <center>
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#edit-parameter-modal{{ $parameter->id }}"
+                                                class="btn bg-gradient-safewor-black text-white"
+                                                style="text-decoration: none;">Editar</button>
                                             <form method="post" action="{{ url('/parameter/delete/' . $parameter->id) }}"
                                                 style="display:inline">
                                                 {{ csrf_field() }}
@@ -81,7 +84,7 @@
                                         </center>
 
                                     </td>
-                                   
+                                    @include('admin.parameters.edit')
                                 </tr>
                             @endforeach
                         </tbody>
@@ -137,6 +140,5 @@
             var searchTerm = $(this).val();
             dataTable.search(searchTerm).draw();
         });
-
     </script>
 @endsection

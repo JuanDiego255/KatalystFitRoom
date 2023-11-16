@@ -14,9 +14,18 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">El éxito es el resultado de pequeñas acciones diarias.</h4>
-                                <h1 class="text-white fadeIn2 fadeInBottom">Estamos Ubicados en Creta, Grecia, Alajuela, CR</h1>
-                                <p class="lead text-white opacity-8 fadeIn3 fadeInBottom">No dudes en contactarnos.</p>
+                                @if (!Auth::check())
+                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Administra tu gimnasio, motiva a tus
+                                        clientes para no para de entrenar!</h4>
+                                    <h1 class="text-white fadeIn2 fadeInBottom">No dejes pasar la oportunidad...</h1>
+                                    <p class="lead text-white opacity-8 fadeIn3 fadeInBottom">De crear rutinas con un solo
+                                        click.</p>
+                                @else
+                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">No te detengas, cada día es mejor!</h4>
+                                    <h1 class="text-white fadeIn2 fadeInBottom">Esfuerzate al máximo y verás resultados
+                                        pronto...</h1>
+                                @endif
+
                             </div>
                         </div>
                     </div>
@@ -29,8 +38,16 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-6 my-auto">
-                                <h4 class="text-white mb-0 fadeIn1 fadeInBottom">La disciplina es la base del éxito..</h4>
-                                <h1 class="text-white fadeIn2 fadeInBottom">Katalyst Fit Room</h1>
+                                @if (!Auth::check())
+                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Realiza tu rutina de forma dinámica..
+                                    </h4>
+                                    <h1 class="text-white fadeIn2 fadeInBottom">Safewor Solutions</h1>
+                                @else
+                                    <h4 class="text-white mb-0 fadeIn1 fadeInBottom">Realiza tu rutina de forma dinámica..
+                                    </h4>
+                                    <h1 class="text-white fadeIn2 fadeInBottom">Explora las funcionalidades!</h1>
+                                @endif
+
 
                             </div>
                         </div>
@@ -49,70 +66,81 @@
             </a>
         </div>
     </div>
-    <h1 class="text-center text-dark">Nuestras Disciplinas</h1>
-    <div class="py-5">
-        <div class="container">
-            <div class="row">
-                <div class="owl-carousel featured-carousel owl-theme mt-3">
-                    @foreach ($disciplines as $discipline)
-                        <div class="item">
-                            <div class="card" data-animation="true">
 
-                                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                                    <a class="d-block blur-shadow-image">
-                                        <img src="{{ asset('storage') . '/' . $discipline->image }}" alt="img-blur-shadow"
-                                            class="img-fluid shadow border-radius-lg w-100" style="height:300px;">
-                                    </a>
-                                    <div class="colored-shadow"
-                                        style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
+    @if ($disciplines != null)
+        @if (!$disciplines->isEmpty())
+            {
+            <h1 class="text-center text-dark">Nuestras Disciplinas</h1>
+            <div class="py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="owl-carousel featured-carousel owl-theme mt-3">
+                            @foreach ($disciplines as $discipline)
+                                <div class="item">
+                                    <div class="card" data-animation="true">
+
+                                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                            <a class="d-block blur-shadow-image">
+                                                <img src="{{ asset('storage') . '/' . $discipline->image }}"
+                                                    alt="img-blur-shadow" class="img-fluid shadow border-radius-lg w-100"
+                                                    style="height:300px;">
+                                            </a>
+                                            <div class="colored-shadow"
+                                                style="background-image: url(&quot;https://demos.creative-tim.com/test/material-dashboard-pro/assets/img/products/product-1-min.jpg&quot;);">
+                                            </div>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <div class="d-flex mt-n6 mx-auto">
+
+                                            </div>
+                                            <h5 class="font-weight-normal mt-3">
+                                                {{ $discipline->discipline }}
+                                            </h5>
+                                            <p class="mb-0">
+                                                {{ $discipline->description }}
+                                            </p>
+                                        </div>
+                                        <hr class="dark horizontal my-0">
+                                        <div class="card-footer d-flex">
+
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-body text-center">
-                                    <div class="d-flex mt-n6 mx-auto">
-                                        
-                                    </div>
-                                    <h5 class="font-weight-normal mt-3">
-                                        {{ $discipline->discipline }}
-                                    </h5>
-                                    <p class="mb-0">
-                                        {{ $discipline->description }}
-                                    </p>
-                                </div>
-                                <hr class="dark horizontal my-0">
-                                <div class="card-footer d-flex">
-                                    
-                                   {{--  <i
-                                        class="material-icons position-relative ms-auto text-lg me-1 my-auto">electric_bolt</i>
-                                   
-                                    <i class="material-icons position-relative ms-auto text-lg me-1 my-auto">inventory</i> --}}
-                                   
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-@endsection
-@section('scripts')
-    <script>
-        $('.featured-carousel').owlCarousel({
-            loop: true,
-            margin: 10,
-           
-            dots: false,
-            responsive: {
-                0: {
-                    items: 1
-                },
-                600: {
-                    items: 2
-                },
-                1000: {
-                    items: 3
-                }
             }
-        })
-    </script>
+        @endif
+    @endif
+
+    @if (!Auth::check())
+    
+    @endif
+
 @endsection
+
+@if ($disciplines != null)
+    @section('scripts')
+        <script>
+            $('.featured-carousel').owlCarousel({
+                loop: true,
+                margin: 10,
+
+                dots: false,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 2
+                    },
+                    1000: {
+                        items: 3
+                    }
+                }
+            })
+        </script>
+    @endsection
+@endif

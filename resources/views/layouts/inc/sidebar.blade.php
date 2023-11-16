@@ -6,7 +6,7 @@
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#" target="_blank">
             {{-- <img src="{{ url('images/carousel1.png') }}" class="navbar-brand-img h-100" alt="main_logo"> --}}
-            <h4 class="ms-1 font-weight-bold text-white">Katalyst Fit Room</h4>
+            <h4 class="ms-1 font-weight-bold text-white">Safewors Solutions</h4>
         </a>
     </div>
 
@@ -80,7 +80,7 @@
                 </a>
             </li>
 
-            <li class="nav-item">
+           {{--  <li class="nav-item">
                 <div class="dropdown">
                     <a href="javascript:;"
                         @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
@@ -131,8 +131,8 @@
                     </center>
                   
                 </div>
-            </li>
-            <li class="nav-item">
+            </li> --}}
+            {{-- <li class="nav-item">
                 <a @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
                     href="{{ url('/parameters') }}">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -140,9 +140,9 @@
                     </div>
                     <span class="nav-link-text text-white ms-1">Parámetros</span>
                 </a>
-            </li>
+            </li> --}}
 
-            <li class="nav-item">
+          {{--   <li class="nav-item">
                 <div class="dropdown">
                     <a href="javascript:;"
                         @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
@@ -209,7 +209,7 @@
                     </center>
                   
                 </div>
-            </li>
+            </li> --}}
             {{--   <li class="nav-item">
                 <a @if ($view_name == 'admin_local_index') class="nav-link active text-white bg-gradient-btnVelvet" @else class="nav-link text-dark" @endif
                     href="{{ url('#') }}">

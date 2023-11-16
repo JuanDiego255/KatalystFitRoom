@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -90,6 +91,7 @@ class RegisterController extends Controller
         if (isset($data['smoke'])) {
             $smoke = 1;
         }
+        $alias = Company::findOrfail($data['company_id']);
 
         return User::create([
             'name' => $data['name'],
@@ -109,6 +111,8 @@ class RegisterController extends Controller
             'weight' => $data['weight'],
             'gender' => $data['gender'],
             'sex' => $data['gender'],
+            'company' => $data['company_id'],
+            'alias' => $alias->alias,
             'anemia' => $anemia,
             'suffocation' => $suffocation,
             'asthmatic' => $asthmatic,

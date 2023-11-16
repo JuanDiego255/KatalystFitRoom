@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Artesaos\SEOTools\Facades\OpenGraph;
 use Artesaos\SEOTools\Facades\SEOMeta;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 
 class FrontendController extends Controller
@@ -21,7 +23,16 @@ class FrontendController extends Controller
     public function index()
     {
         //
-        $disciplines = Discipline::all();
+        $disciplines = null;
+        $alias = "";
+        
+        if (Auth::check()) {
+            if(Auth::user()->alias){
+                $alias = Auth::user()->alias.'_';
+            }            
+            $disciplines = DB::table( $alias. 'disciplines')->get();
+        }
+
         $tags = MetaTags::where('section', 'Inicio')->get();
         foreach ($tags as $tag) {
             SEOMeta::setTitle($tag->title);
@@ -32,6 +43,6 @@ class FrontendController extends Controller
             OpenGraph::setTitle($tag->title);
             OpenGraph::setDescription($tag->meta_og_description);
         }
-        return view('frontend.index', compact('disciplines'));
+        return view('frontend.index',compact('disciplines'));
     }
 }

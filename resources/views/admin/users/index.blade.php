@@ -10,6 +10,7 @@
     <h6>Es recomendable tener creados todos los ejercicios antes de generar las rutinas, ya que los ejercicios guardados
         recientemente, no aparecerán en las rutinas ya creadas, al menos que generen las rutinas desde 0.</h6>
     <center>
+
         <div class="row w-100">
             <div class="col-md-6">
                 <div class="input-group input-group-lg input-group-static my-3 w-100">
@@ -47,11 +48,12 @@
                                 Teléfono</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">
                                 Acciones</th>
-                            
+
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($users as $user)
+                            @include('admin.users.parameter-modal')
                             <tr>
 
                                 <td class="align-middle text-xxs text-center">
@@ -91,20 +93,13 @@
                                 <td class="align-middle">
                                     <center>
                                         @if ($user->is_routine == 0)
-                                            <form method="post" action="{{ url('/create/routine/') }}"
-                                                style="display:inline">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" id="id" name="id"
-                                                    value="{{ $user->id }}">
-                                                <input type="hidden" id="type" name="type" value="0">
-                                                <button
-                                                    onclick="return confirm('Se creará la rutina con los ejercicios creados hasta ahora, desea continuar?')"
-                                                    class="btn bg-gradient-safewor-black text-white btn-tooltip"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Crear Rutina"
-                                                    data-container="body" data-animation="true" type="submit">
-                                                    <i class="material-icons opacity-10">add_circle</i></a>
-                                                </button>
-                                            </form>
+                                           
+                                            <button type="button" data-bs-toggle="modal"
+                                                data-bs-target="#parameter-routine{{ $user->id }}"
+                                                class="btn bg-gradient-safewor-black text-white btn-tooltip"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Crear Rutina"
+                                                data-container="body" data-animation="true" style="text-decoration: none;">
+                                                <i class="material-icons opacity-10">add_circle</i></button>
                                         @else
                                             <a href="{{ url('user/routine/' . $user->id) }}"
                                                 class="btn bg-gradient-safewor-black text-white btn-tooltip"
@@ -171,7 +166,9 @@
             searching: true,
             lengthChange: false,
             "columnDefs": [{
-                "targets": [3,4], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
+                "targets": [3,
+                    4
+                ], // Índice de la columna que deseas deshabilitar (cambia 0 por el índice de tu columna)
                 "orderable": false // Deshabilita la ordenación para la columna específica
             }, ],
             "language": {
@@ -210,6 +207,5 @@
             var searchTerm = $(this).val();
             dataTable.search(searchTerm).draw();
         });
-
     </script>
 @endsection

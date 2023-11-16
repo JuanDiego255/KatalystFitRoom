@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\GeneralCategory;
 use App\Models\Routine;
 use App\Models\RoutineDays;
@@ -15,6 +16,21 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
+    private $alias;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()->alias != "") {
+                $this->alias = Auth::user()->alias . '_' ?? '';
+            } else {
+                $this->alias = "";
+            }
+            // Obtener el alias una vez en el constructor
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of the resource.
      *
@@ -23,12 +39,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         //
+        $general_categories = GeneralCategory::get();
         $paginate = 10;
         $name = $request->get('searchfor');
         date_default_timezone_set('America/Chihuahua');
         $date = date("Y-m-d");
 
         $users = User::Where('users.name', 'like', "%$name%")
+            ->where('alias', Auth::user()->alias)
             ->select(
                 'users.name as name',
                 'users.id as id',
@@ -37,7 +55,7 @@ class UserController extends Controller
                 'users.weight as weight',
                 'users.telephone as telephone'
             )->orderBy('users.name', 'asc')->simplePaginate($paginate);
-        return view('admin.users.index', compact('users', 'date'));
+        return view('admin.users.index', compact('users', 'date','general_categories'));
     }
 
     /**
@@ -48,14 +66,18 @@ class UserController extends Controller
     public function myRoutine()
     {
         //      
-        $uniqueCategories = Routine::where('day', '!=', '0')
-            ->where('routines.user_id', Auth::user()->id)
-            ->where('routines.status', 1)
-            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
+
+
+        $alias = $this->alias;
+
+        $uniqueCategories = Routine::where($alias . 'routines.day', '!=', '0')
+            ->where($alias . 'routines.user_id', Auth::user()->id)
+            ->where($alias . 'routines.status', 1)
+            ->join($alias . 'general_categories', $alias . 'routines.general_category_id', $alias . 'general_categories.id')
             ->select(
-                'general_categories.category as category',
-                'routines.day as day'
-            )->distinct('general_category_id')->orderBy('routines.day', 'asc')->get();
+                $alias . 'general_categories.category as category',
+                $alias . 'routines.day as day'
+            )->distinct($alias . 'general_category_id')->orderBy($alias . 'routines.day', 'asc')->get();
 
         if ($uniqueCategories == null) {
             return redirect('/')->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);
@@ -89,41 +111,42 @@ class UserController extends Controller
         $user = User::find($id);
         $name = $user->name;
         $general_categories = GeneralCategory::get();
+        $alias = $this->alias;
 
         $max_day = RoutineDays::where('user_id', $user->id)->where('status', 1)->max('day');
 
-        $routines = Routine::where('routines.user_id', $id)
-            ->where('routines.status', 1)
-            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
-            ->join('exercises', 'routines.exercise_id', 'exercises.id')
+        $routines = Routine::where($alias . 'routines.user_id', $id)
+            ->where($alias . 'routines.status', 1)
+            ->join($alias . 'general_categories', $alias . 'routines.general_category_id', $alias . 'general_categories.id')
+            ->join($alias . 'exercises', $alias . 'routines.exercise_id', $alias . 'exercises.id')
             ->select(
-                'exercises.id as id',
-                'exercises.exercise as exercise',
-                'general_categories.id as gen_category_id',
-                'general_categories.category as gen_category',
-                'routines.alt as alt',
-                'routines.series as series',
-                'routines.reps as reps',
-                'routines.form as form',
-                'routines.weight as weight',
-                'routines.day as day',
-                'routines.description as description',
-                'routines.status as status',
-                'routines.keep_exercise as keep_exercise',
-                'routines.id as id',
+                $alias . 'exercises.id as id',
+                $alias . 'exercises.exercise as exercise',
+                $alias . 'general_categories.id as gen_category_id',
+                $alias . 'general_categories.category as gen_category',
+                $alias . 'routines.alt as alt',
+                $alias . 'routines.series as series',
+                $alias . 'routines.reps as reps',
+                $alias . 'routines.form as form',
+                $alias . 'routines.weight as weight',
+                $alias . 'routines.day as day',
+                $alias . 'routines.description as description',
+                $alias . 'routines.status as status',
+                $alias . 'routines.keep_exercise as keep_exercise',
+                $alias . 'routines.id as id',
 
-            )->orderBy('routines.day', 'desc')
-            ->get();            
-            $exer_active = 0;
-            foreach($routines as $routine){               
-                
-                if($routine->day != 0){
-                    $exer_active++;
-                }
+            )->orderBy($alias . 'routines.day', 'desc')
+            ->get();
+        $exer_active = 0;
+        foreach ($routines as $routine) {
+
+            if ($routine->day != 0) {
+                $exer_active++;
             }
+        }
 
 
-        return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day','general_categories','exer_active'));
+        return view('admin.users.user-routine', compact('routines', 'name', 'id', 'max_day', 'general_categories', 'exer_active'));
     }
 
     /**
@@ -143,6 +166,7 @@ class UserController extends Controller
                 'identification' => ['required', 'string', 'max:255'],
             ]);
 
+            $alias = Company::findOrfail($request->company_id);
             // Crear un nuevo usuario
             $usuario = new User();
 
@@ -161,6 +185,8 @@ class UserController extends Controller
             $usuario->weight = $request->weight;
             $usuario->gender = $request->gender;
             $usuario->sex = $request->gender;
+            $usuario->company = $request->company_id;
+            $usuario->alias = $alias->alias;
 
             if ($request->anemia != null) {
                 $usuario->anemia = 1;
@@ -244,28 +270,29 @@ class UserController extends Controller
     {
         //
         $user_id = Auth::user()->id;
+        $alias = $this->alias;
 
-        $routines = Routine::where('routines.user_id', $user_id)
-            ->where('routines.day', $id)
-            ->where('routines.status', 1)
-            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
+        $routines = Routine::where($alias . 'routines.user_id', $user_id)
+            ->where($alias . 'routines.day', $id)
+            ->where($alias . 'routines.status', 1)
+            ->join($alias . 'general_categories', $alias . 'routines.general_category_id', $alias . 'general_categories.id')
 
-            ->join('exercises', 'routines.exercise_id', 'exercises.id')
+            ->join($alias . 'exercises', $alias . 'routines.exercise_id', $alias . 'exercises.id')
             ->select(
-                'exercises.id as id',
-                'exercises.exercise as exercise',
-                'exercises.image as image',
-                'general_categories.id as id',
-                'general_categories.category as gen_category',
-                'routines.alt as alt',
-                'routines.series as series',
-                'routines.reps as reps',
-                'routines.description as description',
-                'routines.form as form',
-                'routines.weight as weight',
-                'routines.completed as completed',
-                'routines.status as status',
-                'routines.id as id'
+                $alias . 'exercises.id as id',
+                $alias . 'exercises.exercise as exercise',
+                $alias . 'exercises.image as image',
+                $alias . 'general_categories.id as id',
+                $alias . 'general_categories.category as gen_category',
+                $alias . 'routines.alt as alt',
+                $alias . 'routines.series as series',
+                $alias . 'routines.reps as reps',
+                $alias . 'routines.description as description',
+                $alias . 'routines.form as form',
+                $alias . 'routines.weight as weight',
+                $alias . 'routines.completed as completed',
+                $alias . 'routines.status as status',
+                $alias . 'routines.id as id'
             )
             ->get();
 
@@ -274,14 +301,14 @@ class UserController extends Controller
 
     protected function newuser()
     {
-
-        return view('auth.register');
+        $companies = Company::where('id', Auth::user()->company)->get();
+        return view('auth.register', compact('companies'));
     }
 
     protected function newRegister()
     {
-
-        return view('auth.register-user');
+        $companies = Company::get();
+        return view('auth.register-user', compact('companies'));
     }
 
     /**
@@ -399,14 +426,17 @@ class UserController extends Controller
 
     public function showProcess($id)
     {
-        $results = DB::table('routines')
-            ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
-            ->where('routines.user_id', $id)
-            ->where('routines.day', '!=', 0)
-            ->where('routines.status', 1)
-            ->select('routines.day', 'general_categories.category')
-            ->selectRaw('COUNT(routines.exercise_id) as quantity')
-            ->groupBy('routines.day', 'general_categories.category')
+        $alias = $this->alias;
+        $query = 'count(' . $alias . 'routines.exercise_id) as quantity';
+
+        $results = DB::table($alias . 'routines')
+            ->join($alias . 'general_categories', $alias . 'routines.general_category_id', $alias . 'general_categories.id')
+            ->where($alias . 'routines.user_id', $id)
+            ->where($alias . 'routines.day', '!=', 0)
+            ->where($alias . 'routines.status', 1)
+            ->select($alias . 'routines.day', $alias . 'general_categories.category')
+            ->selectRaw($query)
+            ->groupBy($alias . 'routines.day', $alias . 'general_categories.category')
             ->get();
 
         // Procesa los resultados para eliminar las repeticiones en la primera línea

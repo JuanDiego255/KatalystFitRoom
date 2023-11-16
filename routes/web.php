@@ -113,7 +113,8 @@ Route::group(['auth'], function () {
 
         //Rutas para parámetros
         Route::get('/parameters', [RoutineParameterController::class, 'index']);
-        Route::post('/parameter/store', [RoutineParameterController::class, 'store']);       
+        Route::post('/parameter/store', [RoutineParameterController::class, 'store']);   
+        Route::put('parameter/update/{id}', [RoutineParameterController::class, 'update']);    
         Route::delete('parameter/delete/{id}', [RoutineParameterController::class, 'destroy']);
     });
 

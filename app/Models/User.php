@@ -47,7 +47,10 @@ class User extends Authenticatable
         'nausea',
         'password',
         'is_routine',
-        'change_routine'
+        'change_routine',
+        'company',
+        'approved',
+        'alias'
     ];
 
     /**

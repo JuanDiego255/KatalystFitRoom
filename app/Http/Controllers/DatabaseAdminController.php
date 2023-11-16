@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin\DatabaseAdmin;
+use App\Models\Company;
+use App\Models\Tables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +19,8 @@ class DatabaseAdminController extends Controller
     public function index()
     {
         //
-        return view('admin.database_Admin.index');
+        $companies = Company::get();
+        return view('admin.database_Admin.index', compact('companies'));
     }
 
 
@@ -33,13 +36,18 @@ class DatabaseAdminController extends Controller
             DB::beginTransaction();
             $newAlias = $request->alias;
 
-            $allTables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+            $allTables = Tables::get();
 
             foreach ($allTables as $table) {
-                $newTable = $newAlias . '_' . $table;
-                DB::statement("CREATE TABLE $newTable LIKE $table");
+                
+                $newTable = $newAlias . '_' . $table->table;
+                DB::statement("CREATE TABLE $newTable LIKE $table->table");
             }
 
+            $company = new Company();
+            $company->company = $request->company;
+            $company->alias = $request->alias;
+            $company->save();
             // Confirmar la transacción después de duplicar todas las tablas
             DB::commit();
 

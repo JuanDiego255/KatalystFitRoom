@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\Cart;
+use App\Models\Company;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,11 +30,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         view()->composer('*', function ($view) {
-            $view_name = str_replace('.', '_', $view->getName());
+            $view_name = str_replace('.', '_', $view->getName());          
            
             view()->share([
-                'view_name' => $view_name,
-               
+                'view_name' => $view_name              
             ]);
         });
     }

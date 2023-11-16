@@ -1,6 +1,9 @@
 @extends('layouts.auth')
 
 @section('content')
+    @php
+        $index = 0;
+    @endphp
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -36,8 +39,9 @@
                                         <label class="form-label">Cédula</label>
                                         <input id="identification" type="text"
                                             class="form-control form-control-lg @error('identification') is-invalid @enderror"
-                                            name="identification" minlength="9" maxlength="9" value="{{ old('identification') }}" required
-                                            autocomplete="identification" autofocus>
+                                            name="identification" minlength="9" maxlength="9"
+                                            value="{{ old('identification') }}" required autocomplete="identification"
+                                            autofocus>
 
                                         @error('identification')
                                             <span class="invalid-feedback" role="alert">
@@ -58,7 +62,7 @@ is-invalid
 @enderror"
                                             name="telephone" value="{{ old('telephone') }}" required
                                             autocomplete="telephone" autofocus>
-                                       
+
 
                                         @error('telephone')
                                             <span class="invalid-feedback" role="alert">
@@ -77,10 +81,35 @@ is-invalid
                                             class="form-control form-control-lg @error('whatsapp')
 is-invalid
 @enderror"
-                                            name="whatsapp" value="{{ old('whatsapp') }}" autocomplete="whatsapp"
-                                            autofocus>
+                                            name="whatsapp" value="{{ old('whatsapp') }}" autocomplete="whatsapp" autofocus>
 
                                         @error('whatsapp')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+
+                                    <div class="input-group input-group-static">
+                                        <label>Compañías</label>
+                                        <select id="company_id" name="company_id"
+                                            class="form-control form-control-lg @error('company_id') is-invalid @enderror"
+                                            required autocomplete="company_id" autofocus>
+
+                                            @foreach ($companies as $company)
+                                                <option @if ($index == 0) selected @endif
+                                                    value="{{ $company->id }}">
+                                                    {{ $company->company }}
+                                                </option>
+                                                @php
+                                                    $index = $index + 1;
+                                                @endphp
+                                            @endforeach
+
+                                        </select>
+                                        @error('company_id')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>
@@ -124,8 +153,7 @@ is-invalid
                                         <label class="form-label">Tutor</label>
                                         <input id="tutor" type="text"
                                             class="form-control form-control-lg @error('tutor') is-invalid @enderror"
-                                            name="tutor" value="{{ old('tutor') }}" autocomplete="tutor"
-                                            autofocus>
+                                            name="tutor" value="{{ old('tutor') }}" autocomplete="tutor" autofocus>
 
                                         @error('tutor')
                                             <span class="invalid-feedback" role="alert">
@@ -147,19 +175,19 @@ is-invalid
                                             <option value="O+">O+
                                             </option>
                                             <option value="O-">O-
-                                            </option>   
+                                            </option>
                                             <option value="A+">A+
                                             </option>
                                             <option value="A-">A-
-                                            </option> 
+                                            </option>
                                             <option value="B+">B+
                                             </option>
                                             <option value="B-">B-
-                                            </option>  
+                                            </option>
                                             <option value="AB+">AB+
                                             </option>
                                             <option value="AB-">AB-
-                                            </option>    
+                                            </option>
                                         </select>
                                         @error('blood_type')
                                             <span class="invalid-feedback" role="alert">
@@ -192,8 +220,8 @@ is-invalid
                                         <label class="form-label">Lesiones</label>
                                         <input id="injuries" type="text"
                                             class="form-control form-control-lg @error('injuries') is-invalid @enderror"
-                                            name="injuries" value="{{ old('injuries') }}"
-                                            autocomplete="injuries" autofocus>
+                                            name="injuries" value="{{ old('injuries') }}" autocomplete="injuries"
+                                            autofocus>
 
                                         @error('injuries')
                                             <span class="invalid-feedback" role="alert">
@@ -208,8 +236,7 @@ is-invalid
                                         <label class="form-label">Padecimientos</label>
                                         <input id="sick" type="text"
                                             class="form-control form-control-lg @error('sick') is-invalid @enderror"
-                                            name="sick" value="{{ old('sick') }}" autocomplete="sick"
-                                            autofocus>
+                                            name="sick" value="{{ old('sick') }}" autocomplete="sick" autofocus>
 
                                         @error('sick')
                                             <span class="invalid-feedback" role="alert">
@@ -326,8 +353,8 @@ is-invalid
                                         <label class="form-label">Mareos</label>
                                         <input id="dizziness" type="text"
                                             class="form-control form-control-lg @error('dizziness') is-invalid @enderror"
-                                            name="dizziness" value="{{ old('dizziness') }}"
-                                            autocomplete="dizziness" autofocus>
+                                            name="dizziness" value="{{ old('dizziness') }}" autocomplete="dizziness"
+                                            autofocus>
 
 
                                         @error('dizziness')
@@ -344,8 +371,8 @@ is-invalid
                                         <label class="form-label">Desmayos</label>
                                         <input id="fainting" type="text"
                                             class="form-control form-control-lg @error('fainting') is-invalid @enderror"
-                                            name="fainting" value="{{ old('fainting') }}"
-                                            autocomplete="fainting" autofocus>
+                                            name="fainting" value="{{ old('fainting') }}" autocomplete="fainting"
+                                            autofocus>
 
 
                                         @error('fainting')
@@ -362,8 +389,7 @@ is-invalid
                                         <label class="form-label">Nauseas</label>
                                         <input id="nausea" type="text"
                                             class="form-control form-control-lg @error('nausea') is-invalid @enderror"
-                                            name="nausea" value="{{ old('nausea') }}" autocomplete="nausea"
-                                            autofocus>
+                                            name="nausea" value="{{ old('nausea') }}" autocomplete="nausea" autofocus>
 
 
                                         @error('nausea')
@@ -382,8 +408,8 @@ is-invalid
                                         <label class="form-label">Describir</label>
                                         <input id="sport_Activity" type="text"
                                             class="form-control form-control-lg @error('sport_Activity') is-invalid @enderror"
-                                            name="sport_Activity" value="{{ old('sport_Activity') }}" autocomplete="sport_Activity"
-                                            autofocus>
+                                            name="sport_Activity" value="{{ old('sport_Activity') }}"
+                                            autocomplete="sport_Activity" autofocus>
 
 
                                         @error('sport_Activity')
@@ -398,7 +424,8 @@ is-invalid
                                         class="input-group input-group-lg input-group-outline @error('contact_emergency') is-filled @enderror my-3">
                                         <label class="form-label">Contacto De Emergencia</label>
                                         <input onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
-                                            maxlength="11" minlength="8" id="contact_emergency" type="contact_emergency"
+                                            maxlength="11" minlength="8" id="contact_emergency"
+                                            type="contact_emergency"
                                             class="form-control form-control-lg @error('contact_emergency')
 is-invalid
 @enderror"

@@ -2,9 +2,15 @@
     id="navbarBlur" data-scroll="true">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
-            <a href="{{ url('/') }}">
-                <h4 class="font-weight-bolder mb-0">Katalyst Fit Room</h4>
-            </a>
+            @guest
+                <a href="{{ url('/') }}">
+                    <h4 class="font-weight-bolder mb-0">Safewor Solutions</h4>
+                </a>
+            @else
+                <a href="{{ url('/') }}">
+                    <h4 class="font-weight-bolder mb-0"> {{ Auth::user()->name }}</h4>
+                </a>
+            @endguest
 
         </nav>
 
@@ -27,27 +33,26 @@
                             </div>
                         </a>
                     </li>
-                   
+
                     <li class="nav-item px-3">
                         <a href="{{ route('login') }}" class="nav-link text-body p-0">
                             Ingresar
                         </a>
                     </li>
-                     <li class="nav-item px-3">
+                    <li class="nav-item px-3">
                         <a href="{{ url('register/user') }}" class="nav-link text-body p-0">
                             Registrarse
                         </a>
                     </li>
-                    <li class="nav-item px-3">
+                    {{--  <li class="nav-item px-3">
                         <a href="{{ url('asist-index') }}" class="nav-link text-body p-0">
                             Asistencia
                         </a>
-                    </li>
-                   
+                    </li> --}}
                 @else
                     <li class="nav-item px-3">
-              
-                   
+
+
                     <li class="nav-item dropdown pe-2">
                         <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
@@ -71,8 +76,7 @@
                                                 Salir
                                             </h6>
                                         </div>
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                            class="d-none">
+                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                             @csrf
                                         </form>
                                     </div>
@@ -87,12 +91,12 @@
                             Rutina
                         </a>
                     </li>
-                     <li class="nav-item px-3">
-                        <a href="{{ url('/create-word/'.Auth::user()->id) }}" class="nav-link text-body p-0">
+                    <li class="nav-item px-3">
+                        <a href="{{ url('/create-word/' . Auth::user()->id) }}" class="nav-link text-body p-0">
                             Descargar Rutina
                         </a>
                     </li>
-                  
+
                 @endguest
 
             </ul>

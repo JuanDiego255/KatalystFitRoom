@@ -21,7 +21,20 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class RoutineController extends Controller
 {
+    private $alias;
 
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()->alias != "") {
+                $this->alias = Auth::user()->alias . '_' ?? '';
+            } else {
+                $this->alias = "";
+            }
+            // Obtener el alias una vez en el constructor
+            return $next($request);
+        });
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -91,15 +104,37 @@ class RoutineController extends Controller
 
             if ($request->type == 0) {
 
-                $parameters = RoutineParameter::get();
+                $generalCategories = $request->except(['_token', 'id', 'type']);
 
-                foreach ($parameters as $parameter) {
+                foreach ($generalCategories as $key => $value) {
+                    // Divide la clave en partes usando "_" como separador
+                    $parts = explode('_', $key);
 
-                    $array_parameters[] = [
-                        "general_category_id" => $parameter->general_category_id,
-                        "quantity" => $parameter->quantity,
-                        "day" => $parameter->day
-                    ];
+                    // Verifica si la clave se dividió en dos partes y si la primera parte es "quantity" o "day"
+                    if (count($parts) == 2 && (in_array($parts[0], ['quantity', 'day']))) {
+                        $segmento_id = $parts[1];
+                        $segmento_tipo = $parts[0];
+
+                        // Agrega el valor al nuevo arreglo asociativo
+                        $segmentos[$segmento_id][$segmento_tipo] = $value;
+                    }
+                }
+                $array_parameters = null;
+
+                // Imprime los segmentos
+                foreach ($segmentos as $id => $segmento) {
+
+                    if ($segmento["quantity"] != 0 && $segmento["day"] != 0) {
+                        $array_parameters[] = [
+                            "general_category_id" => $id,
+                            "quantity" => $segmento["quantity"],
+                            "day" => $segmento["day"],
+                        ];
+                    }
+                }
+
+                if ($array_parameters == null) {
+                    return redirect('/users')->with(['status' => 'Se debe ingresar el día, y la cantidad de ejercicios a crear en al menos un grupo muscular', 'icon' => 'warning']);
                 }
 
                 foreach ($exercises as $exercise) {
@@ -338,7 +373,7 @@ class RoutineController extends Controller
             if ($message_error_quantity) {
                 return redirect()->back()->with(['status' => 'La cantidad de ejercicios a generar es mayor que la cantidad de ejercicios activos. Ejercicios generados: ' . $exercise_active, 'icon' => 'warning']);
             }
-            return redirect()->back()->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
+            return redirect('/user/routine/' . $request->id)->with(['status' => 'Se ha creado la rutina con éxito', 'icon' => 'success']);
         } catch (Exception $e) {
             DB::rollback();
             throw $e;
@@ -572,25 +607,26 @@ class RoutineController extends Controller
                 "bold" => true,
             ];
             //Estilos
+            $alias = $this->alias;
 
             // Obtener rutinas y categorizar por categoría general
-            $routines = Routine::where('routines.user_id', $id)
-                ->where('routines.day', '!=', 0)
-                ->where('routines.status', 1)
-                ->join('general_categories', 'routines.general_category_id', 'general_categories.id')
-                ->join('exercises', 'routines.exercise_id', 'exercises.id')
+            $routines = Routine::where($alias . 'routines.user_id', $id)
+                ->where($alias . 'routines.day', '!=', 0)
+                ->where($alias . 'routines.status', 1)
+                ->join($alias . 'general_categories', $alias . 'routines.general_category_id', $alias . 'general_categories.id')
+                ->join($alias . 'exercises', $alias . 'routines.exercise_id', $alias . 'exercises.id')
                 ->select(
 
-                    'general_categories.category as category',
-                    'exercises.exercise as exercise',
-                    'routines.day as day',
-                    'routines.description as description',
-                    'routines.series as series',
-                    'routines.alt as alt',
-                    'routines.weight as weight',
-                    'routines.form as form',
-                    'routines.reps as reps'
-                )->orderBy('routines.day', 'asc')->orderBy('routines.alt', 'asc')->get();
+                    $alias . 'general_categories.category as category',
+                    $alias . 'exercises.exercise as exercise',
+                    $alias . 'routines.day as day',
+                    $alias . 'routines.description as description',
+                    $alias . 'routines.series as series',
+                    $alias . 'routines.alt as alt',
+                    $alias . 'routines.weight as weight',
+                    $alias . 'routines.form as form',
+                    $alias . 'routines.reps as reps'
+                )->orderBy($alias . 'routines.day', 'asc')->orderBy($alias . 'routines.alt', 'asc')->get();
 
             if (count($routines) == 0) {
                 return redirect()->back()->with(['status' => 'Aún no han generado su rutina, comunícate con personal del gimnasio para asignarla.', 'icon' => 'warning']);

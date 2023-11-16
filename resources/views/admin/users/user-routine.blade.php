@@ -17,7 +17,7 @@
             Nueva Rutina <i class="material-icons text-white">expand_more</i>
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-            <li>
+            {{-- <li>
                 <form method="post" action="{{ url('/create/routine/') }}" style="display:inline">
                     {{ csrf_field() }}
                     <input type="hidden" id="id" name="id" value="{{ $id }}">
@@ -25,7 +25,7 @@
                     <button class="dropdown-item" type="submit">Crear Rutina De Cero
                     </button>
                 </form>
-            </li>
+            </li> --}}
             <li>
                 <button type="button" data-bs-toggle="modal" data-bs-target="#quantity-exercises"
                     class="dropdown-item">Generar Rutina Aleatoria</button>

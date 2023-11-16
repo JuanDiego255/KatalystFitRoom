@@ -7,10 +7,25 @@ use App\Models\Exercises;
 use App\Models\ExercisesCategory;
 use App\Models\GeneralCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ExercisesController extends Controller
 {
+    private $alias;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (Auth::user()->alias != "") {
+                $this->alias = Auth::user()->alias . '_' ?? '';
+            }else{
+                $this->alias = "";
+            }
+            // Obtener el alias una vez en el constructor
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,14 +33,19 @@ class ExercisesController extends Controller
      */
     public function index(Request $request)
     {
+        $alias = $this->alias;
+        if (Auth::user()->alias) {
+            $alias = Auth::user()->alias . '_';
+        }
+
         $categories = GeneralCategory::get();
-        $exercises = Exercises::join('general_categories', 'exercises.general_category_id', 'general_categories.id')
+        $exercises = Exercises::join($alias.'general_categories', $alias.'exercises.general_category_id', $alias.'general_categories.id')
             ->select(
-                'exercises.id as id',
-                'exercises.exercise as exercise',
-                'exercises.image as image',
-                'general_categories.id as gen_category_id',
-                'general_categories.category as gen_category'
+                $alias.'exercises.id as id',
+                $alias.'exercises.exercise as exercise',
+                $alias.'exercises.image as image',
+                $alias.'general_categories.id as gen_category_id',
+                $alias.'general_categories.category as gen_category'
             )
             ->get();
         return view('admin.exercises.index', compact('categories', 'exercises'));
